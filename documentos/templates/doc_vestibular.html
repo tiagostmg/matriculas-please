@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Homologação do Vestibular</title>
+  <link rel="stylesheet" href="style_base.css">
+  <style>
+    .vestibular-card {
+      width: 440px;
+      height: 340px;
+      background-color: var(--bg-vestibular);
+      border: 3.5px solid var(--border-vestibular);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .vestibular-header {
+      border-bottom: 2px solid var(--border-vestibular);
+      padding-bottom: 6px;
+      color: #172d3d;
+    }
+
+    .status-badge {
+      border: 2px solid;
+      border-radius: 4px;
+      padding: 8px 12px;
+      text-align: center;
+      margin-top: 6px;
+    }
+
+    .status-badge.convocado {
+      border-color: #1a7536;
+      background: rgba(26, 117, 54, 0.12);
+      color: #115c28;
+    }
+
+    .status-badge.reprovado {
+      border-color: #aa1e1e;
+      background: rgba(170, 30, 30, 0.12);
+      color: #881212;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- COMISSÃO DO VESTIBULAR (UNIFOR) -->
+  <div class="document-card vestibular-card guilloche-bg">
+
+    <!-- Cabeçalho -->
+    <div class="vestibular-header">
+      <div class="pixel-title">UNIFOR</div>
+      <div class="pixel-subtitle">COMISSÃO PERMANENTE DO VESTIBULAR UNIFICADO — RESULTADO OFICIAL</div>
+    </div>
+
+    <!-- Informações do Vestibulando -->
+    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+      <div>
+        <div class="doc-label">Candidato Classificado:</div>
+        <div class="doc-field doc-text">{{NOME}}</div>
+      </div>
+
+      <div>
+        <div class="doc-label">Curso Selecionado / Turno:</div>
+        <div class="doc-field doc-text">{{CURSO}} ({{TURNO}})</div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <div style="flex: 1;">
+          <div class="doc-label">Nota no Vestibular:</div>
+          <div class="doc-field doc-text">{{NOTA_VESTIBULAR}}</div>
+        </div>
+        <div style="flex: 1;">
+          <div class="doc-label">Nota de Corte Exigida:</div>
+          <div class="doc-field doc-text">{{NOTA_CORTE}}</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="doc-label">Classificação no Processo:</div>
+        <div class="doc-field doc-text">{{CLASSIFICACAO}}º LUGAR (TOTAL DE VAGAS: {{TOTAL_VAGAS}})</div>
+      </div>
+    </div>
+
+    <!-- Status de Convocação -->
+    <div>
+      <div class="status-badge {{STATUS_CLASSE}}">
+        <div class="pixel-title" style="font-size: 11px;">{{STATUS_TITULO}}</div>
+        <div class="doc-text" style="font-size: 15px; margin-top: 2px;">{{STATUS_SUB}}</div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

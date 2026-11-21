@@ -1,0 +1,22 @@
+{
+  "personagem_id": "33",
+  "personagem_foto_png": "/home/tiago/dev/narak/sprites/personagens-85/33/sprite_01.png",
+  "personagem_sprites": [
+    "/home/tiago/dev/narak/sprites/personagens-85/33/sprite_01.png",
+    "/home/tiago/dev/narak/sprites/personagens-85/33/sprite_02.png",
+    "/home/tiago/dev/narak/sprites/personagens-85/33/sprite_03.png"
+  ],
+  "rg_foto_personagem_id": "33",
+  "rg_foto_png": "/home/tiago/dev/narak/sprites/personagens-85/33/sprite_01.png",
+  "candidato": "Amanda Lima",
+  "rg_nome": "Amanda Lima",
+  "curso": "Filosofia",
+  "vestibular_curso": "Filosofia",
+  "nota_vestibular": 9.8,
+  "nota_corte": 7.0,
+  "status_vestibular": "LISTA DE ESPERA / EXCEDENTE",
+  "validade_rg": 2033,
+  "carimbo_ensino_medio": true,
+  "tem_fraude": true,
+  "descricao_fraude": "Vestibular irregular: candidato não convocado (Status: Lista de Espera)."
+}

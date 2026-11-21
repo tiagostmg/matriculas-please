@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://ciohvqh0kxq4k"]
+
+[ext_resource type="Texture2D" uid="uid://bfrwuh6vfddh6" path="res://assets/background/4.jpeg" id="2_1b3iq"]
+[ext_resource type="FontFile" uid="uid://b3wegulbobpjo" path="res://assets/fonts/PressStart2P.ttf" id="2_font"]
+[ext_resource type="Script" uid="uid://bls1qhpk6uevj" path="res://scripts/jogo.gd" id="3_jogoscript"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_normal"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
+bg_color = Color(1, 1, 1, 0.1)
+
+[node name="Jogo" type="Control" unique_id=1871506705]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_jogoscript")
+
+[node name="Fundo" type="TextureRect" parent="." unique_id=597472721]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_1b3iq")
+expand_mode = 1
+
+[node name="FilaExterna" type="Control" parent="." unique_id=774128901]
+clip_contents = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.305
+mouse_filter = 2
+
+[node name="Janela" type="Control" parent="." unique_id=224750536]
+clip_contents = true
+layout_mode = 1
+anchor_left = 0.013
+anchor_top = 0.352
+anchor_right = 0.306
+anchor_bottom = 0.644
+
+[node name="Pessoa" type="TextureRect" parent="Janela" unique_id=940554219]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.2
+anchor_top = 0.05
+anchor_right = 0.8
+anchor_bottom = 1.0
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AreaDocumentos" type="Control" parent="." unique_id=35531405]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BtnProximo" type="Button" parent="." unique_id=220989094]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.236
+anchor_top = 0.901
+anchor_right = 0.309
+anchor_bottom = 0.961
+offset_top = 3.0
+offset_bottom = 3.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.24, 0.17, 0.08, 1)
+theme_override_colors/font_pressed_color = Color(0.15, 0.1, 0.04, 1)
+theme_override_colors/font_hover_color = Color(0.15, 0.1, 0.04, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_normal")
+text = "PRÓXIMO"
+
+[connection signal="pressed" from="BtnProximo" to="." method="_on_btn_proximo_pressed"]

@@ -1,0 +1,217 @@
+[gd_scene format=3 uid="uid://21yg7aqpyg0u"]
+
+[ext_resource type="Texture2D" uid="uid://w0g54k5sfeha" path="res://assets/background/inicio.jpeg" id="1_i3824"]
+[ext_resource type="Script" path="res://scripts/inicio.gd" id="2_script"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_normal"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
+bg_color = Color(1, 1, 1, 0.1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_painel_opcoes"]
+bg_color = Color(0.84, 0.78, 0.65, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.28, 0.2, 0.12, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_fechar_normal"]
+bg_color = Color(0.75, 0.69, 0.56, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.28, 0.2, 0.12, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_fechar_hover"]
+bg_color = Color(0.88, 0.82, 0.7, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.28, 0.2, 0.12, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="Inicio" type="Control" unique_id=371767057]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_script")
+
+[node name="Fundo" type="TextureRect" parent="." unique_id=1121247078]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_i3824")
+expand_mode = 1
+
+[node name="Botoes" type="VBoxContainer" parent="." unique_id=250095040]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.4
+anchor_top = 0.65
+anchor_right = 0.616
+anchor_bottom = 0.948
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="BtnIniciar" type="Button" parent="Botoes" unique_id=2146700827]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_hover")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_normal")
+
+[node name="BtnOpcoes" type="Button" parent="Botoes" unique_id=280394761]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_hover")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_normal")
+
+[node name="BtnSair" type="Button" parent="Botoes" unique_id=1507734138]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_hover")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_normal")
+
+[node name="PopupOpcoes" type="ColorRect" parent="." unique_id=981234501]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="Painel" type="PanelContainer" parent="PopupOpcoes" unique_id=981234502]
+custom_minimum_size = Vector2(420, 260)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -210.0
+offset_top = -130.0
+offset_right = 210.0
+offset_bottom = 130.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_painel_opcoes")
+
+[node name="Margin" type="MarginContainer" parent="PopupOpcoes/Painel" unique_id=981234503]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="PopupOpcoes/Painel/Margin" unique_id=981234504]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Titulo" type="Label" parent="PopupOpcoes/Painel/Margin/VBox" unique_id=981234505]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.22, 0.14, 0.08, 1)
+theme_override_font_sizes/font_size = 24
+text = "OPÇÕES"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="PopupOpcoes/Painel/Margin/VBox" unique_id=981234506]
+layout_mode = 2
+
+[node name="HBoxVolume" type="HBoxContainer" parent="PopupOpcoes/Painel/Margin/VBox" unique_id=981234507]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LabelVolume" type="Label" parent="PopupOpcoes/Painel/Margin/VBox/HBoxVolume" unique_id=981234508]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.22, 0.14, 0.08, 1)
+theme_override_font_sizes/font_size = 16
+text = "Volume Geral"
+
+[node name="SliderVolume" type="HSlider" parent="PopupOpcoes/Painel/Margin/VBox/HBoxVolume" unique_id=981234509]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+max_value = 100.0
+step = 1.0
+value = 100.0
+
+[node name="LabelValor" type="Label" parent="PopupOpcoes/Painel/Margin/VBox/HBoxVolume" unique_id=981234510]
+custom_minimum_size = Vector2(45, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.22, 0.14, 0.08, 1)
+theme_override_font_sizes/font_size = 16
+text = "100%"
+horizontal_alignment = 2
+
+[node name="HBoxTelaCheia" type="HBoxContainer" parent="PopupOpcoes/Painel/Margin/VBox" unique_id=981234511]
+layout_mode = 2
+
+[node name="LabelTelaCheia" type="Label" parent="PopupOpcoes/Painel/Margin/VBox/HBoxTelaCheia" unique_id=981234512]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.22, 0.14, 0.08, 1)
+theme_override_font_sizes/font_size = 16
+text = "Tela Cheia"
+
+[node name="CheckTelaCheia" type="CheckButton" parent="PopupOpcoes/Painel/Margin/VBox/HBoxTelaCheia" unique_id=981234513]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="Espacador" type="Control" parent="PopupOpcoes/Painel/Margin/VBox" unique_id=981234514]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BtnFecharOpcoes" type="Button" parent="PopupOpcoes/Painel/Margin/VBox" unique_id=981234515]
+custom_minimum_size = Vector2(140, 38)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.22, 0.14, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.15, 0.08, 0.04, 1)
+theme_override_colors/font_pressed_color = Color(0.15, 0.08, 0.04, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_fechar_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_fechar_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_fechar_hover")
+text = "VOLTAR"
+
+[connection signal="pressed" from="Botoes/BtnIniciar" to="." method="_on_btn_iniciar_pressed"]
+[connection signal="pressed" from="Botoes/BtnOpcoes" to="." method="_on_btn_opcoes_pressed"]
+[connection signal="pressed" from="Botoes/BtnSair" to="." method="_on_btn_sair_pressed"]
+[connection signal="value_changed" from="PopupOpcoes/Painel/Margin/VBox/HBoxVolume/SliderVolume" to="." method="_on_slider_volume_value_changed"]
+[connection signal="toggled" from="PopupOpcoes/Painel/Margin/VBox/HBoxTelaCheia/CheckTelaCheia" to="." method="_on_check_tela_cheia_toggled"]
+[connection signal="pressed" from="PopupOpcoes/Painel/Margin/VBox/BtnFecharOpcoes" to="." method="_on_btn_fechar_opcoes_pressed"]

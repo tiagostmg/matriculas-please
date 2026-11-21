@@ -1,0 +1,22 @@
+{
+  "personagem_id": "10",
+  "personagem_foto_png": "/home/tiago/dev/narak/sprites/personagens-64/10/sprite_01.png",
+  "personagem_sprites": [
+    "/home/tiago/dev/narak/sprites/personagens-64/10/sprite_01.png",
+    "/home/tiago/dev/narak/sprites/personagens-64/10/sprite_02.png",
+    "/home/tiago/dev/narak/sprites/personagens-64/10/sprite_03.png"
+  ],
+  "rg_foto_personagem_id": "10",
+  "rg_foto_png": "/home/tiago/dev/narak/sprites/personagens-64/10/sprite_01.png",
+  "candidato": "Thiago Martins",
+  "rg_nome": "Thiago Martins",
+  "curso": "Ciência da Computação",
+  "vestibular_curso": "Ciência da Computação",
+  "nota_vestibular": 9.2,
+  "nota_corte": 7.0,
+  "status_vestibular": "CONVOCADO - 1ª CHAMADA",
+  "validade_rg": 2033,
+  "carimbo_ensino_medio": false,
+  "tem_fraude": true,
+  "descricao_fraude": "Histórico irregular: ausência do carimbo oficial da Secretaria de Educação."
+}

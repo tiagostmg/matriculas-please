@@ -1,0 +1,22 @@
+{
+  "personagem_id": "21",
+  "personagem_foto_png": "/home/tiago/dev/narak/sprites/personagens-64/21/sprite_01.png",
+  "personagem_sprites": [
+    "/home/tiago/dev/narak/sprites/personagens-64/21/sprite_01.png",
+    "/home/tiago/dev/narak/sprites/personagens-64/21/sprite_02.png",
+    "/home/tiago/dev/narak/sprites/personagens-64/21/sprite_03.png"
+  ],
+  "rg_foto_personagem_id": "21",
+  "rg_foto_png": "/home/tiago/dev/narak/sprites/personagens-64/21/sprite_01.png",
+  "candidato": "Bianca Santos",
+  "rg_nome": "Bianca Santos",
+  "curso": "Ciência da Computação",
+  "vestibular_curso": "Ciência da Computação",
+  "nota_vestibular": 9.4,
+  "nota_corte": 7.0,
+  "status_vestibular": "CONVOCADO - 1ª CHAMADA",
+  "validade_rg": 2023,
+  "carimbo_ensino_medio": true,
+  "tem_fraude": true,
+  "descricao_fraude": "Identidade adulterada: ano de validade vencido (2023) foi tachado e alterado à mão para 2028."
+}

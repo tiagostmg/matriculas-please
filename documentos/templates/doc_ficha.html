@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Requerimento de Matrícula</title>
+  <link rel="stylesheet" href="style_base.css">
+  <style>
+    .ficha-card {
+      width: 440px;
+      height: 480px;
+      background-color: var(--bg-ficha);
+      border: 3.5px solid var(--border-ficha);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .ficha-header {
+      border-bottom: 2px solid var(--border-ficha);
+      padding-bottom: 8px;
+      color: #2b2219;
+    }
+
+    .stamp-container {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- FICHA DE REQUERIMENTO DE MATRÍCULA -->
+  <div class="document-card ficha-card guilloche-bg">
+
+    <!-- Cabeçalho -->
+    <div class="ficha-header">
+      <div class="pixel-title">UNIFOR</div>
+      <div class="pixel-subtitle">DEPARTAMENTO DE REGISTRO E CONTROLE ACADÊMICO</div>
+      <div class="doc-text" style="font-size: 15px; text-align: center; margin-top: 4px; color: #554433;">
+        PROTOCOLO DE INGRESSO Nº {{NUMERO_PROTOCOLO}}/2026
+      </div>
+    </div>
+
+    <!-- Dados Declarados pelo Candidato -->
+    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+      <div>
+        <div class="doc-label">Requerente da Vaga:</div>
+        <div class="doc-field doc-text">{{NOME}}</div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <div style="flex: 2;">
+          <div class="doc-label">Curso Pleiteado:</div>
+          <div class="doc-field doc-text">{{CURSO}}</div>
+        </div>
+        <div style="flex: 1;">
+          <div class="doc-label">Turno:</div>
+          <div class="doc-field doc-text">{{TURNO}}</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="doc-label">Modalidade de Concorrência:</div>
+        <div class="doc-field doc-text">{{MODALIDADE}}</div>
+      </div>
+
+      <div>
+        <div class="doc-label">Status da Taxa de Matrícula:</div>
+        <div class="doc-field doc-text" style="color: {{TAXA_COR}};">{{STATUS_TAXA}}</div>
+      </div>
+    </div>
+
+    <!-- Área de Parecer / Carimbo Oficial do Inspetor -->
+    <div style="border-top: 2px dashed #887766; padding-top: 10px; text-align: center;">
+      <div class="doc-label" style="font-size: 12px; margin-bottom: 6px;">
+        PARECER DA SECRETARIA GERAL DE MATRÍCULAS:
+      </div>
+
+      <div class="stamp-container">
+        {{CARIMBO_DECISAO_HTML}}
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

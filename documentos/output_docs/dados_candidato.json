@@ -1,0 +1,22 @@
+{
+  "personagem_id": "01",
+  "personagem_foto_png": "/home/tiago/dev/narak/sprites/personagens-85/01/sprite_01.png",
+  "personagem_sprites": [
+    "/home/tiago/dev/narak/sprites/personagens-85/01/sprite_01.png",
+    "/home/tiago/dev/narak/sprites/personagens-85/01/sprite_02.png",
+    "/home/tiago/dev/narak/sprites/personagens-85/01/sprite_03.png"
+  ],
+  "rg_foto_personagem_id": "01",
+  "rg_foto_png": "/home/tiago/dev/narak/sprites/personagens-85/01/sprite_01.png",
+  "candidato": "Sofia Costa",
+  "rg_nome": "Sofia Costa",
+  "curso": "Engenharia de Software",
+  "vestibular_curso": "Engenharia de Software",
+  "nota_vestibular": 8.4,
+  "nota_corte": 7.0,
+  "status_vestibular": "CONVOCADO - 1ª CHAMADA",
+  "validade_rg": 2027,
+  "carimbo_ensino_medio": true,
+  "tem_fraude": true,
+  "descricao_fraude": "Histórico irregular: Ensino Médio pendente de conclusão (não concluído)."
+}

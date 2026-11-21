@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Preview dos Templates — Matrículas, Please!</title>
+  <link rel="stylesheet" href="templates/style_base.css">
+  <style>
+    body {
+      background: #181d20;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      padding: 40px 20px;
+      font-family: var(--font-doc);
+    }
+
+    .page-title {
+      font-family: var(--font-pixel);
+      font-size: 16px;
+      color: #72d69b;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .page-desc {
+      font-size: 20px;
+      color: #aaa;
+      text-align: center;
+      max-width: 700px;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+      gap: 30px;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .card-wrapper {
+      background: #22292d;
+      border: 1px solid #334047;
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-label {
+      font-family: var(--font-pixel);
+      font-size: 11px;
+      color: #e2c044;
+      margin-bottom: 15px;
+      align-self: flex-start;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div>
+    <div class="page-title">MATRÍCULAS, PLEASE! — PAINEL DE TEMPLATES HTML / CSS</div>
+    <div class="page-desc">
+      Edite os arquivos em <code>documentos/templates/</code> para alterar cores, bordas, carimbos e layout.
+      O script <code>gerar.py</code> converterá esses templates automaticamente em imagens PNG para o jogo.
+    </div>
+  </div>
+
+  <div class="preview-grid">
+
+    <!-- 1. RG / CNH / PASSAPORTE -->
+    <div class="card-wrapper">
+      <div class="card-label">1. IDENTIFICAÇÃO (RG / CNH / PASSAPORTE)</div>
+      <div class="document-card guilloche-bg"
+        style="width: 440px; height: 310px; background-color: var(--bg-rg); border: 3.5px solid var(--border-rg); padding: 10px 14px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div
+          style="border-bottom: 2px solid var(--border-rg); padding-bottom: 4px; margin-bottom: 4px; color: #143e26; text-align: center;">
+          <div class="pixel-title">REPÚBLICA FEDERATIVA DO BRASIL</div>
+          <div class="pixel-subtitle">REGISTRO GERAL DE IDENTIDADE (SSP/CE)</div>
+          <div style="font-family: var(--font-pixel); font-size: 7px; margin-top: 2px; color: #1d4d30;">Secretaria de
+            Segurança Pública do Estado do Ceará</div>
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 2px; align-items: flex-start;">
+          <div class="photo-container">
+            <div class="photo-staple"></div>
+            <img
+              src="../sprites/personagens/10/sprite_01.png"
+              alt="Foto">
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+            <div>
+              <div class="doc-label">Nome Completo:</div>
+              <div class="doc-field doc-text">LUCAS RODRIGUES SILVA</div>
+            </div>
+            <div>
+              <div class="doc-label">Filiação (Mãe / Pai):</div>
+              <div class="doc-field doc-text" style="font-size: 16px;">MARIA SILVA / JOÃO SILVA</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <div style="flex: 1;">
+                <div class="doc-label">Nascimento:</div>
+                <div class="doc-field doc-text">14/05/2004</div>
+              </div>
+              <div style="flex: 1;">
+                <div class="doc-label">Naturalidade:</div>
+                <div class="doc-field doc-text">FORTALEZA - CE</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          style="border-top: 1.5px solid var(--border-rg); padding-top: 6px; display: flex; justify-content: space-between;">
+          <div><span class="doc-label">REGISTRO:</span> <span class="doc-text"
+              style="font-weight: bold;">20.450.912-3</span></div>
+          <div><span class="doc-label">CPF:</span> <span class="doc-text"
+              style="font-weight: bold;">452.890.112-90</span></div>
+          <div><span class="doc-label">VALIDADE:</span> <span class="doc-text"
+              style="color: #1b5025; font-weight: bold;">2031</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. HOMOLOGAÇÃO DO VESTIBULAR -->
+    <div class="card-wrapper">
+      <div class="card-label">2. CONVOCAÇÃO DO VESTIBULAR (UNIFOR)</div>
+      <div class="document-card guilloche-bg"
+        style="width: 440px; height: 340px; background-color: var(--bg-vestibular); border: 3.5px solid var(--border-vestibular); padding: 14px 16px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="border-bottom: 2px solid var(--border-vestibular); padding-bottom: 6px; color: #172d3d;">
+          <div class="pixel-title">UNIFOR</div>
+          <div class="pixel-subtitle">COMISSÃO PERMANENTE DO VESTIBULAR — RESULTADO OFICIAL 2026</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+          <div>
+            <div class="doc-label">Candidato Classificado:</div>
+            <div class="doc-field doc-text">LUCAS RODRIGUES SILVA</div>
+          </div>
+          <div>
+            <div class="doc-label">Curso Selecionado / Turno:</div>
+            <div class="doc-field doc-text">CIÊNCIA DA COMPUTAÇÃO (INTEGRAL)</div>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+              <div class="doc-label">Nota no Vestibular:</div>
+              <div class="doc-field doc-text" style="color: #0d3251;">8.5</div>
+            </div>
+            <div style="flex: 1;">
+              <div class="doc-label">Nota de Corte Exigida:</div>
+              <div class="doc-field doc-text" style="color: #44301d;">7.0</div>
+            </div>
+          </div>
+          <div>
+            <div class="doc-label">Classificação no Processo:</div>
+            <div class="doc-field doc-text">04º LUGAR (TOTAL DE VAGAS: 50)</div>
+          </div>
+        </div>
+        <div>
+          <div
+            style="border: 2px solid #1a7536; background: rgba(26, 117, 54, 0.12); color: #115c28; border-radius: 4px; padding: 8px 12px; text-align: center;">
+            <div class="pixel-title" style="font-size: 11px;">★ CONVOCADO - 1ª CHAMADA ★</div>
+            <div class="doc-text" style="font-size: 15px; margin-top: 2px;">HABILITADO PARA MATRÍCULA IMEDIATA</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. CERTIFICADO ENSINO MÉDIO -->
+    <div class="card-wrapper">
+      <div class="card-label">3. ENSINO MÉDIO & HISTÓRICO ESCOLAR</div>
+      <div class="document-card guilloche-bg"
+        style="width: 440px; height: 380px; background-color: var(--bg-historico); border: 3.5px solid var(--border-historico); padding: 14px 16px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div
+          style="border-bottom: 2px solid var(--border-historico); padding-bottom: 6px; color: #3b2b1b; text-align: center;">
+          <div class="pixel-title" style="font-size: 11px;">COLÉGIO FARIAS BRITO</div>
+          <div class="pixel-subtitle">CERTIFICADO OFICIAL DE CONCLUSÃO DO ENSINO MÉDIO</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
+          <div>
+            <div class="doc-label">Nome do Diplomado(a):</div>
+            <div class="doc-field doc-text">LUCAS RODRIGUES SILVA</div>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+              <div class="doc-label">Ano de Conclusão:</div>
+              <div class="doc-field doc-text">2024</div>
+            </div>
+            <div style="flex: 1;">
+              <div class="doc-label">Situação Final:</div>
+              <div class="doc-field doc-text" style="color: #1a7536;">CONCLUÍDO COM APROVAÇÃO</div>
+            </div>
+          </div>
+        </div>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 15px;">
+          <thead>
+            <tr style="background: rgba(100, 80, 60, 0.12); font-family: var(--font-pixel); font-size: 7px;">
+              <th style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">DISCIPLINA</th>
+              <th style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">MÉDIA</th>
+              <th style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">SITUAÇÃO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">LÍNGUA PORTUGUESA E LITERATURA</td>
+              <td style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">8.5</td>
+              <td style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">APROVADO</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">MATEMÁTICA E SUAS TECNOLOGIAS</td>
+              <td style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">8.0</td>
+              <td style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">APROVADO</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">CIÊNCIAS DA NATUREZA</td>
+              <td style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">7.8</td>
+              <td style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">APROVADO</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">CIÊNCIAS HUMANAS E SOCIAIS</td>
+              <td style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">8.2</td>
+              <td style="border: 1px solid rgba(100, 80, 60, 0.4); padding: 3px 6px;">APROVADO</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+          <div style="text-align: center; border-top: 1px solid #555; width: 170px; padding-top: 3px;">
+            <div class="doc-text" style="font-size: 14px; font-style: italic;">Profª Marlene S. Prado</div>
+            <div class="doc-label" style="font-size: 11px;">DIRETORA GERAL</div>
+          </div>
+          <div class="round-seal">
+            <span class="star">★</span>
+            <span class="seal-dept">SEC. EDUCAÇÃO<br>AUTÊNTICO</span>
+            <span class="seal-sub">VISTO OFICIAL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. FICHA DE MATRÍCULA (DOCUMENTO DO ATENDENTE / GUICHÊ) -->
+    <div class="card-wrapper">
+      <div class="card-label">4. FICHA DE MATRÍCULA (DOCUMENTO DO GUICHÊ / USUÁRIO)</div>
+      <div class="document-card guilloche-bg"
+        style="width: 440px; height: 480px; background-color: var(--bg-ficha); border: 3.5px solid var(--border-ficha); padding: 16px 18px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="border-bottom: 2px solid var(--border-ficha); padding-bottom: 8px; color: #2b2219;">
+          <div class="pixel-title">UNIFOR</div>
+          <div class="pixel-subtitle">DEPARTAMENTO DE REGISTRO E CONTROLE ACADÊMICO</div>
+          <div class="doc-text" style="font-size: 15px; text-align: center; margin-top: 4px; color: #554433;">
+            PROTOCOLO Nº 48192/2026
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+          <div>
+            <div class="doc-label">Requerente da Vaga:</div>
+            <div class="doc-field doc-text">LUCAS RODRIGUES SILVA</div>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <div style="flex: 2;">
+              <div class="doc-label">Curso Pleiteado:</div>
+              <div class="doc-field doc-text">CIÊNCIA DA COMPUTAÇÃO</div>
+            </div>
+            <div style="flex: 1;">
+              <div class="doc-label">Turno:</div>
+              <div class="doc-field doc-text">INTEGRAL</div>
+            </div>
+          </div>
+          <div>
+            <div class="doc-label">Modalidade de Concorrência:</div>
+            <div class="doc-field doc-text">AMPLA CONCORRÊNCIA</div>
+          </div>
+          <div>
+            <div class="doc-label">Status da Taxa de Matrícula:</div>
+            <div class="doc-field doc-text" style="color: #1a7536;">PAGA</div>
+          </div>
+        </div>
+        <div style="border-top: 2px dashed #887766; padding-top: 10px; text-align: center;">
+          <div class="doc-label" style="font-size: 12px; margin-bottom: 6px;">PARECER DA SECRETARIA (USO DO ATENDENTE):</div>
+          <div style="display: flex; justify-content: center; align-items: center; min-height: 80px;">
+            <div style="border: 2px dashed #887766; padding: 12px 18px; border-radius: 4px; color: #665544; font-family: var(--font-pixel); font-size: 8px; text-align: center; letter-spacing: 0.5px; background: rgba(0,0,0,0.03);">
+              [ ESPAÇO RESERVADO PARA CARIMBO DO FUNCIONÁRIO ]
+              <div style="font-family: var(--font-doc); font-size: 15px; margin-top: 4px; color: #443322;">AGUARDANDO CONFERÊNCIA DOCUMENTAL</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. DEMONSTRAÇÃO VISUAL DE FRAUDE / TACHADO (PAPERS, PLEASE) -->
+    <div class="card-wrapper" style="grid-column: 1 / -1;">
+      <div class="card-label">★ EXEMPLOS DE ADULTERAÇÃO / TACHADO (MECÂNICA DE FRAUDE)</div>
+      <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%;">
+        
+        <!-- Exemplo 1: Histórico com Nota Tachada -->
+        <div style="background: var(--bg-historico); border: 2px solid var(--border-historico); padding: 12px; border-radius: 4px; width: 320px; color: #111;">
+          <div class="doc-label" style="font-weight: bold; margin-bottom: 4px;">HISTÓRICO ESCOLAR (NOTA TACHADA):</div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <tr style="background: rgba(100, 80, 60, 0.15); font-family: var(--font-pixel); font-size: 7px;">
+              <th style="padding: 2px 4px; border: 1px solid #998;">DISCIPLINA</th>
+              <th style="padding: 2px 4px; border: 1px solid #998;">MÉDIA</th>
+              <th style="padding: 2px 4px; border: 1px solid #998;">SITUAÇÃO</th>
+            </tr>
+            <tr>
+              <td style="padding: 2px 4px; border: 1px solid #998;">MATEMÁTICA</td>
+              <td style="padding: 2px 4px; border: 1px solid #998;"><span class="strike-fraud">4.5</span> <span class="handwritten-fraud">7.5</span></td>
+              <td style="padding: 2px 4px; border: 1px solid #998;"><span class="strike-fraud">REPROVADO</span> <span class="handwritten-fraud">APROVADO</span></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Exemplo 2: RG com Ano Tachado -->
+        <div style="background: var(--bg-rg); border: 2px solid var(--border-rg); padding: 12px; border-radius: 4px; width: 320px; color: #111;">
+          <div class="doc-label" style="font-weight: bold; margin-bottom: 4px;">IDENTIDADE (VALIDADE TACHADA):</div>
+          <div class="doc-field doc-text">
+            VALIDADE: <span class="validity-tag expired"><span class="strike-fraud">2023</span> <span class="handwritten-fraud">2028</span></span>
+          </div>
+          <div class="doc-label" style="margin-top: 6px; font-size: 11px;">Tentativa grosseira de estender prazo vencido com caneta.</div>
+        </div>
+
+        <!-- Exemplo 3: Vestibular com Status Tachado -->
+        <div style="background: var(--bg-vestibular); border: 2px solid var(--border-vestibular); padding: 12px; border-radius: 4px; width: 320px; color: #111;">
+          <div class="doc-label" style="font-weight: bold; margin-bottom: 4px;">VESTIBULAR (STATUS TACHADO):</div>
+          <div style="border: 2px solid #902020; background: rgba(144, 32, 32, 0.08); padding: 6px 8px; border-radius: 3px; text-align: center;">
+            <div style="font-family: var(--font-pixel); font-size: 8px;">
+              <span class="strike-fraud">LISTA DE ESPERA</span> <span class="handwritten-fraud">CONVOCADO</span>
+            </div>
+            <div class="doc-text" style="font-size: 13px; margin-top: 2px;">
+              <span class="strike-fraud">NÃO APROVADO</span> <span class="handwritten-fraud">HOMOLOGADO</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

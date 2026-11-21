@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://d1docscene001"]
+
+[ext_resource type="Script" path="res://scripts/documento.gd" id="1_docscript"]
+
+[node name="Documento" type="TextureRect" unique_id=712839102]
+offset_right = 250.0
+offset_bottom = 330.0
+mouse_default_cursor_shape = 2
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("1_docscript")

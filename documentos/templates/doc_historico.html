@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Histórico Escolar do Ensino Médio</title>
+  <link rel="stylesheet" href="style_base.css">
+  <style>
+    .historico-card {
+      width: 440px;
+      height: 400px;
+      background-color: var(--bg-historico);
+      border: 3.5px solid var(--border-historico);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .historico-header {
+      border-bottom: 2px solid var(--border-historico);
+      padding-bottom: 5px;
+      color: #3b2b1b;
+      text-align: center;
+    }
+    .school-title {
+      font-family: var(--font-pixel);
+      font-size: 9.5px;
+      line-height: 1.35;
+      letter-spacing: 0.3px;
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+    .grades-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      font-size: 15px;
+    }
+    .grades-table th, .grades-table td {
+      border: 1px solid rgba(100, 80, 60, 0.4);
+      padding: 3px 6px;
+      text-align: left;
+    }
+    .grades-table th {
+      background: rgba(100, 80, 60, 0.12);
+      font-family: var(--font-pixel);
+      font-size: 7px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CERTIFICADO E HISTÓRICO DO ENSINO MÉDIO -->
+  <div class="document-card historico-card guilloche-bg">
+    
+    <!-- Cabeçalho com o Nome do Colégio (Suporta nomes longos sem quebrar) -->
+    <div class="historico-header">
+      <div class="school-title">{{ESCOLA}}</div>
+      <div class="pixel-subtitle">CERTIFICADO OFICIAL DE CONCLUSÃO DO ENSINO MÉDIO</div>
+    </div>
+
+    <!-- Dados do Aluno -->
+    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
+      <div>
+        <div class="doc-label">Nome do Diplomado(a):</div>
+        <div class="doc-field doc-text">{{NOME}}</div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <div style="flex: 1;">
+          <div class="doc-label">Ano de Conclusão:</div>
+          <div class="doc-field doc-text">{{ANO_CONCLUSAO}}</div>
+        </div>
+        <div style="flex: 1;">
+          <div class="doc-label">Situação Final:</div>
+          <div class="doc-field doc-text" style="color: {{SITUACAO_COR}};">{{SITUACAO_TEXTO}}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela das 4 Disciplinas -->
+    <table class="grades-table">
+      <thead>
+        <tr>
+          <th>DISCIPLINA</th>
+          <th>MÉDIA</th>
+          <th>SITUAÇÃO</th>
+        </tr>
+      </thead>
+      <tbody>
+{{TABELA_DISCIPLINAS_HTML}}
+      </tbody>
+    </table>
+
+    <!-- Rodapé: Assinatura e Carimbo Oficial da Secretaria -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+      
+      <!-- Assinatura da Diretoria -->
+      <div style="text-align: center; border-top: 1px solid #555; width: 180px; padding-top: 3px;">
+        <div class="doc-text" style="font-size: 14px; font-style: italic;">Profª Marlene S. Prado</div>
+        <div class="doc-label" style="font-size: 11px;">DIRETORA GERAL REGISTRADA</div>
+      </div>
+
+      <!-- Carimbo Oficial Redondo ou Mensagem de Ausência -->
+      {{CARIMBO_OFICIAL_HTML}}
+
+    </div>
+
+  </div>
+
+</body>
+</html>

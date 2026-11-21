@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Documento de Identidade</title>
+  <link rel="stylesheet" href="style_base.css">
+  <style>
+    .rg-card {
+      width: 440px;
+      height: 310px;
+      background-color: var(--bg-rg);
+      border: 3.5px solid var(--border-rg);
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .rg-header {
+      border-bottom: 2px solid var(--border-rg);
+      padding-bottom: 4px;
+      margin-bottom: 4px;
+      color: #143e26;
+      text-align: center;
+    }
+
+    .rg-header .dept-title {
+      font-family: var(--font-pixel);
+      font-size: 7px;
+      margin-top: 2px;
+      color: #1d4d30;
+      letter-spacing: 0.3px;
+    }
+
+    .rg-body {
+      display: flex;
+      gap: 12px;
+      margin-top: 2px;
+      align-items: flex-start;
+    }
+
+    .rg-info-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .rg-footer {
+      border-top: 1.5px solid var(--border-rg);
+      padding-top: 5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .validity-tag {
+      font-weight: bold;
+    }
+
+    .validity-tag.expired {
+      color: #a01010;
+    }
+
+    .validity-tag.valid {
+      color: #1b5025;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- DOCUMENTO DE IDENTIDADE (RG / CNH / PASSAPORTE) -->
+  <div class="document-card rg-card guilloche-bg">
+
+    <!-- Cabeçalho Oficial Compacto (Margem Reduzida) -->
+    <div class="rg-header">
+      <div class="pixel-title">{{ORGAO_EMISSOR}}</div>
+      <div class="pixel-subtitle">{{TIPO_DOCUMENTO}}</div>
+      <div class="dept-title">Secretaria de Segurança Pública do Estado do Ceará</div>
+    </div>
+
+    <!-- Corpo com Foto e Dados (Carimbo sobreposto removido) -->
+    <div class="rg-body">
+
+      <!-- Foto 3x4 com Grampo Superior (sem carimbo cobrindo a foto) -->
+      <div class="photo-container">
+        <div class="photo-staple"></div>
+        <img src="{{FOTO_URL}}" alt="Foto 3x4">
+      </div>
+
+      <!-- Dados Pessoais -->
+      <div class="rg-info-column">
+        <div>
+          <div class="doc-label">Nome Completo:</div>
+          <div class="doc-field doc-text">{{NOME}}</div>
+        </div>
+
+        <div>
+          <div class="doc-label">Filiação (Mãe / Pai):</div>
+          <div class="doc-field doc-text" style="font-size: 16px;">{{FILIACAO}}</div>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <div style="flex: 1;">
+            <div class="doc-label">Nascimento:</div>
+            <div class="doc-field doc-text">{{DATA_NASCIMENTO}}</div>
+          </div>
+          <div style="flex: 1;">
+            <div class="doc-label">Naturalidade:</div>
+            <div class="doc-field doc-text">{{NATURALIDADE}}</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Rodapé com Registros e Validade -->
+    <div class="rg-footer">
+      <div>
+        <span class="doc-label">REGISTRO:</span>
+        <span class="doc-text" style="font-weight: bold; margin-left: 4px;">{{NUMERO_DOCUMENTO}}</span>
+      </div>
+      <div>
+        <span class="doc-label">CPF:</span>
+        <span class="doc-text" style="font-weight: bold; margin-left: 4px;">{{CPF}}</span>
+      </div>
+      <div>
+        <span class="doc-label">VALIDADE:</span>
+        <span class="doc-text validity-tag {{VALIDADE_CLASSE}}" style="margin-left: 4px;">{{ANO_VALIDADE}}</span>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

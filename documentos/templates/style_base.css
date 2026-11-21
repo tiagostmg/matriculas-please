@@ -1,0 +1,279 @@
+/* ==============================================================
+   ESTILO BASE — DOCUMENTOS RETRÔ / PAPERS, PLEASE ("MATRÍCULAS, PLEASE!")
+   ============================================================== */
+
+@import url('fonts.css');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+:root {
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-doc: 'VT323', monospace;
+  
+  /* Cores de papéis oficiais */
+  --bg-rg: #d9ebd9;
+  --border-rg: #1f5030;
+  
+  --bg-vestibular: #f0f3ee;
+  --border-vestibular: #233e50;
+  
+  --bg-historico: #f7f2e4;
+  --border-historico: #665038;
+  
+  --bg-ficha: #fbf7ee;
+  --border-ficha: #524230;
+  
+  /* Cores de carimbos */
+  --stamp-approved: #1b7a34;
+  --stamp-rejected: #b31d1d;
+  --stamp-blue: #1b4b7a;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+}
+
+body {
+  background: transparent;
+  font-family: var(--font-doc);
+  color: #1a1a1a;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+/* Moldura externa do documento */
+.document-card {
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  image-rendering: pixelated;
+  user-select: none;
+  color: #111111 !important;
+}
+
+/* Padrão guilhochê / linhas de segurança retrô */
+.guilloche-bg {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 7px,
+    rgba(0, 0, 0, 0.04) 7px,
+    rgba(0, 0, 0, 0.04) 8px
+  );
+}
+
+/* Tipografia */
+.pixel-title {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  line-height: 1.4;
+  text-align: center;
+  letter-spacing: 0.5px;
+  color: #111111 !important;
+}
+
+.pixel-subtitle {
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  text-align: center;
+  margin-top: 3px;
+  color: #222222 !important;
+}
+
+.doc-text {
+  font-family: var(--font-doc);
+  font-size: 19px;
+  line-height: 1.15;
+  color: #111111 !important;
+}
+
+.doc-label {
+  font-family: var(--font-doc);
+  font-size: 13px;
+  color: #444444 !important;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.doc-field {
+  background: rgba(255, 255, 255, 0.75);
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.4);
+  padding: 1px 6px;
+  font-weight: bold;
+  color: #111111 !important;
+}
+
+/* Foto 3x4 do documento */
+.photo-container {
+  position: relative;
+  width: 84px;
+  height: 110px;
+  background: #cbd3d8;
+  border: 2px solid #334;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.photo-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+/* Grampo de metal no topo da foto */
+.photo-staple {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 5px;
+  background: #7a8288;
+  border-top: 1px solid #bbc;
+  border-bottom: 1px solid #445;
+  border-radius: 1px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+/* Carimbo oficial na foto */
+.photo-stamp {
+  position: absolute;
+  bottom: -4px;
+  right: -6px;
+  width: 52px;
+  height: 52px;
+  border: 2px dashed rgba(27, 75, 122, 0.8);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: rotate(-15deg);
+  pointer-events: none;
+}
+
+.photo-stamp span {
+  font-family: var(--font-pixel);
+  font-size: 6px;
+  color: rgba(27, 75, 122, 0.9);
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Carimbos de Decisão (DEFERIDO / INDEFERIDO) */
+.decision-stamp {
+  border: 3.5px solid;
+  border-radius: 4px;
+  padding: 8px 12px;
+  text-align: center;
+  display: inline-block;
+  transform: rotate(-4deg);
+  box-shadow: 0 0 1px rgba(0,0,0,0.2);
+}
+
+.decision-stamp.approved {
+  border-color: var(--stamp-approved);
+  background: rgba(27, 122, 52, 0.12);
+  color: var(--stamp-approved);
+}
+
+.decision-stamp.rejected {
+  border-color: var(--stamp-rejected);
+  background: rgba(179, 29, 29, 0.12);
+  color: var(--stamp-rejected);
+}
+
+.decision-stamp .stamp-title {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.decision-stamp .stamp-sub {
+  font-family: var(--font-doc);
+  font-size: 17px;
+  margin-top: 2px;
+  letter-spacing: 0.5px;
+}
+
+/* Carimbo redondo da escola / autenticação */
+.round-seal {
+  width: 95px;
+  height: 95px;
+  border: 2.5px solid var(--stamp-blue);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--stamp-blue);
+  transform: rotate(6deg);
+  background: rgba(27, 75, 122, 0.05);
+  padding: 4px;
+  text-align: center;
+}
+
+.round-seal .star {
+  font-size: 10px;
+}
+
+.round-seal .seal-dept {
+  font-family: var(--font-pixel);
+  font-size: 5.5px;
+  line-height: 1.3;
+}
+
+.round-seal .seal-sub {
+  font-family: var(--font-doc);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+/* ==============================================================
+   ESTILOS DE ADULTERAÇÃO / TACHADO / FRAUDE (PAPERS, PLEASE)
+   ============================================================== */
+.strike-fraud {
+  position: relative;
+  display: inline-block;
+  text-decoration: line-through;
+  text-decoration-color: #a01010;
+  text-decoration-thickness: 3px;
+  color: #777777 !important;
+  opacity: 0.85;
+}
+
+.handwritten-fraud {
+  display: inline-block;
+  font-family: var(--font-doc);
+  font-size: 20px;
+  color: #0c3474 !important; /* Tinta de caneta esferográfica azul */
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  margin-left: 6px;
+  transform: rotate(-3deg);
+  text-shadow: 0 0 1px rgba(12, 52, 116, 0.4);
+}
+
+.fraud-scribble {
+  position: relative;
+}
+
+.fraud-scribble::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  top: 50%;
+  height: 3px;
+  background: #a01010;
+  transform: translateY(-50%) rotate(-1deg);
+  pointer-events: none;
+}
+
