@@ -1,5 +1,7 @@
 extends TextureRect
 
+signal ampliacao_solicitada(documento: TextureRect)
+
 ## Identificador do documento ("rg", "vestibular", "historico", "ficha")
 @export var tipo_documento: String = ""
 
@@ -12,6 +14,28 @@ var bloqueado_animacao: bool = false
 var offset_clique: Vector2 = Vector2.ZERO
 var tamanho_base: Vector2 = Vector2(260, 340)
 var na_mesa: bool = false
+var deferido: bool = false
+
+@onready var carimbo: Label = $Carimbo
+
+
+func _ready() -> void:
+	resized.connect(_atualizar_fonte_carimbo)
+
+
+func carimbar(aprovado: bool) -> void:
+	deferido = aprovado
+	carimbo.text = "DEFERIDO" if aprovado else "INDEFERIDO"
+	var cor := Color("#216441") if aprovado else Color("#982e31")
+	carimbo.add_theme_color_override("font_color", cor)
+	_atualizar_fonte_carimbo()
+	carimbo.show()
+
+
+func bloquear_interacao() -> void:
+	arrastando = false
+	bloqueado_animacao = true
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func configurar(tex: Texture2D, tipo: String, pos_inicial: Vector2, comeca_na_mesa: bool = false) -> void:
@@ -44,6 +68,11 @@ func _gui_input(event: InputEvent) -> void:
 	if bloqueado_animacao:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed and event.double_click:
+			arrastando = false
+			accept_event()
+			ampliacao_solicitada.emit(self)
+			return
 		if event.pressed:
 			arrastando = true
 			move_to_front()
@@ -95,3 +124,7 @@ func _atualizar_tamanho(manter_sob_mouse: bool) -> void:
 		offset_clique = size * proporcao_offset
 	else:
 		size = novo_tamanho
+
+
+func _atualizar_fonte_carimbo() -> void:
+	carimbo.add_theme_font_size_override("font_size", maxi(1, roundi(size.x * 0.1)))

@@ -2,12 +2,28 @@ extends Control
 
 const CENA_DOCUMENTO := preload("res://scenes/documento.tscn")
 const SCRIPT_BONEQUINHO := preload("res://scripts/bonequinho_fila.gd")
+const CANDIDATOS_POR_TURNO := 5
+const DICAS_DOCUMENTOS := {
+	"rg": "Abra a identidade com dois cliques. Compare a foto com o rosto no guichê e confira a validade.",
+	"ficha": "Abra a ficha e compare o nome com o da identidade.",
+	"vestibular": "Abra a convocação. Compare o curso com a ficha e confira a nota de corte.",
+	"historico": "Abra o histórico. Confira a conclusão do ensino médio e o carimbo oficial.",
+}
 
 @onready var fila_externa: Control = $FilaExterna
 @onready var janela_guiche: Control = $Janela
 @onready var pessoa_sprite: TextureRect = $Janela/Pessoa
+@onready var fala_candidato: Label = $Janela/FalaCandidato
 @onready var area_documentos: Control = $AreaDocumentos
 @onready var btn_proximo: Button = $BtnProximo
+@onready var painel_decisao: VBoxContainer = $PainelDecisao
+@onready var btn_aprovar: Button = $PainelDecisao/Botoes/Aprovar
+@onready var btn_reprovar: Button = $PainelDecisao/Botoes/Reprovar
+@onready var resultado_decisao: Label = $PainelDecisao/Resultado
+@onready var btn_manual: Button = $PainelTurno/Cabecalho/Manual
+@onready var progresso_turno: Label = $PainelTurno/Cabecalho/Progresso
+@onready var dica_turno: Label = $PainelTurno/Dica
+@onready var sobreposicao = $SobreposicaoTurno
 
 ## Quantidade de bonequinhos visíveis na fila lá fora
 @export var tamanho_fila: int = 10
@@ -18,9 +34,15 @@ const SCRIPT_BONEQUINHO := preload("res://scripts/bonequinho_fila.gd")
 ## Posição proporcional (0.0 a 1.0 da tela) onde a Ficha de Requerimento aparece na mesa
 @export var pos_ficha_relativa: Vector2 = Vector2(0.66, 0.36)
 
-var em_transicao: bool = false
+var em_transicao: bool = true
 var tem_candidato_no_guiche: bool = false
+var decisao_registrada: bool = false
+var ficha_atual: TextureRect
 var bonecos_fila: Array[Control] = []
+var atendidos: int = 0
+var avaliados: int = 0
+var acertos: int = 0
+var documentos_consultados: Dictionary = {}
 
 ## Lista dinâmica com todos os personagens (01 a 48) descobertos na pasta assets/personagens
 var todos_personagens: Array[String] = []
@@ -33,10 +55,18 @@ var fila_prontos: Array[Dictionary] = []
 var gerando_em_background: bool = false
 var slot_buffer_indice: int = 0
 var aguardando_buffer_para_entrar: bool = false
+var candidatos_preparados: int = 0
 
 
 func _ready() -> void:
 	randomize()
+	btn_aprovar.pressed.connect(_registrar_decisao.bind(true))
+	btn_reprovar.pressed.connect(_registrar_decisao.bind(false))
+	btn_manual.pressed.connect(sobreposicao.mostrar_manual)
+	sobreposicao.reinicio_solicitado.connect(func(): get_tree().reload_current_scene())
+	sobreposicao.menu_solicitado.connect(func(): get_tree().change_scene_to_file("res://scenes/inicio.tscn"))
+	progresso_turno.text = "Atendidos 0/%d" % CANDIDATOS_POR_TURNO
+	dica_turno.text = "Clique em Próximo para chamar o primeiro candidato."
 	pessoa_sprite.visible = false
 	pessoa_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_descobrir_personagens()
@@ -46,6 +76,8 @@ func _ready() -> void:
 	
 	await get_tree().process_frame
 	_inicializar_fila_externa()
+	em_transicao = false
+	btn_proximo.disabled = false
 
 
 func _descobrir_personagens() -> void:
@@ -79,25 +111,32 @@ func _sortear_proximo_personagem() -> String:
 
 ## Dispara a geração procedural de um candidato em uma thread separada do WorkerThreadPool
 func _disparar_precarregamento_background() -> void:
-	if gerando_em_background or fila_prontos.size() >= 2:
+	if gerando_em_background or fila_prontos.size() >= 2 or candidatos_preparados >= CANDIDATOS_POR_TURNO:
 		return
 	
 	gerando_em_background = true
+	candidatos_preparados += 1
 	var id_sorteado := _sortear_proximo_personagem()
 	slot_buffer_indice = (slot_buffer_indice + 1) % 4
 	
 	var dir_projeto := ProjectSettings.globalize_path("res://")
 	var dir_documentos := dir_projeto.path_join("../documentos").simplify_path()
 	var script_gerar := dir_documentos.path_join("gerar.py")
-	var pasta_saida := dir_projeto.path_join("assets/documentos_exemplo/slot_" + str(slot_buffer_indice))
+	var slot := "slot_%d" % slot_buffer_indice
+	var pasta_saida := ProjectSettings.globalize_path("user://documentos/" + slot)
+	var pasta_exemplo := dir_projeto.path_join("assets/documentos_exemplo/" + slot)
 	
-	WorkerThreadPool.add_task(_tarefa_gerar_candidato_thread.bind(id_sorteado, script_gerar, pasta_saida))
+	WorkerThreadPool.add_task(_tarefa_gerar_candidato_thread.bind(id_sorteado, script_gerar, pasta_saida, pasta_exemplo))
 
 
-func _tarefa_gerar_candidato_thread(id_char: String, script_gerar: String, pasta_saida: String) -> void:
+func _tarefa_gerar_candidato_thread(id_char: String, script_gerar: String, pasta_saida: String, pasta_exemplo: String) -> void:
+	var pasta_documentos := pasta_exemplo
 	if FileAccess.file_exists(script_gerar):
 		var saida := []
-		OS.execute("python3", [script_gerar, id_char, "--output", pasta_saida], saida, true)
+		var python := "python" if OS.get_name() == "Windows" else "python3"
+		var codigo := OS.execute(python, ["-X", "utf8", script_gerar, id_char, "--output", pasta_saida], saida, true)
+		if codigo == 0:
+			pasta_documentos = pasta_saida
 	
 	# Lê as 4 imagens PNG e o JSON diretamente na thread de background (Image é thread-safe!)
 	var img_rg := Image.new()
@@ -105,13 +144,13 @@ func _tarefa_gerar_candidato_thread(id_char: String, script_gerar: String, pasta
 	var img_hist := Image.new()
 	var img_ficha := Image.new()
 	
-	img_rg.load(pasta_saida.path_join("1_documento_identidade.png"))
-	img_vest.load(pasta_saida.path_join("2_convocacao_vestibular.png"))
-	img_hist.load(pasta_saida.path_join("3_historico_ensino_medio.png"))
-	img_ficha.load(pasta_saida.path_join("4_ficha_requerimento.png"))
+	img_rg.load(pasta_documentos.path_join("1_documento_identidade.png"))
+	img_vest.load(pasta_documentos.path_join("2_convocacao_vestibular.png"))
+	img_hist.load(pasta_documentos.path_join("3_historico_ensino_medio.png"))
+	img_ficha.load(pasta_documentos.path_join("4_ficha_requerimento.png"))
 	
 	var dados_json: Dictionary = {}
-	var json_path := pasta_saida.path_join("dados_candidato.json")
+	var json_path := pasta_documentos.path_join("dados_candidato.json")
 	if FileAccess.file_exists(json_path):
 		var texto := FileAccess.get_file_as_string(json_path)
 		var parsed = JSON.parse_string(texto)
@@ -119,7 +158,7 @@ func _tarefa_gerar_candidato_thread(id_char: String, script_gerar: String, pasta
 			dados_json = parsed
 	
 	var pacote := {
-		"id": id_char,
+		"id": String(dados_json.get("personagem_id", id_char)),
 		"dados": dados_json,
 		"img_rg": img_rg,
 		"img_vest": img_vest,
@@ -174,33 +213,104 @@ func _inicializar_fila_externa() -> void:
 			b.queue_free()
 	bonecos_fila.clear()
 	
-	for i in range(tamanho_fila):
+	for i in range(mini(tamanho_fila, CANDIDATOS_POR_TURNO)):
 		var b := _criar_bonequinho()
 		b.position = _obter_posicao_slot_fila(i)
 		bonecos_fila.append(b)
 
 
 func _on_btn_proximo_pressed() -> void:
-	if em_transicao:
-		return
 	chamar_proximo_candidato()
 
 
 func chamar_proximo_candidato() -> void:
+	if em_transicao or sobreposicao.visible or (tem_candidato_no_guiche and not decisao_registrada):
+		return
+
 	em_transicao = true
 	btn_proximo.disabled = true
+	painel_decisao.hide()
+	dica_turno.hide()
 	
-	if tem_candidato_no_guiche and pessoa_sprite.visible:
+	if tem_candidato_no_guiche:
 		_recolher_documentos_e_sair_candidato()
 	else:
 		_avancar_fila_e_entrar_novo()
 
 
+func _registrar_decisao(aprovado: bool) -> void:
+	if em_transicao or sobreposicao.visible or not tem_candidato_no_guiche or decisao_registrada:
+		return
+
+	decisao_registrada = true
+	atendidos += 1
+	progresso_turno.text = "Atendidos %d/%d" % [atendidos, CANDIDATOS_POR_TURNO]
+	dica_turno.hide()
+	btn_aprovar.disabled = true
+	btn_reprovar.disabled = true
+	if is_instance_valid(ficha_atual):
+		ficha_atual.carimbar(aprovado)
+		ficha_atual.move_to_front()
+	_animar_reacao_candidato(aprovado)
+
+	var resultado := "Matrícula aprovada" if aprovado else "Matrícula reprovada"
+	var tem_fraude: Variant = dados_candidato_atual.get("tem_fraude")
+	if tem_fraude is bool:
+		avaliados += 1
+		var decisao_correta: bool = aprovado != tem_fraude
+		if decisao_correta:
+			acertos += 1
+		var motivo := "Documentação regular."
+		if tem_fraude:
+			motivo = String(dados_candidato_atual.get("descricao_fraude", "")).strip_edges()
+			if motivo.is_empty():
+				motivo = "A documentação tem uma irregularidade."
+		resultado += "\n%s\n%s" % ["Decisão correta" if decisao_correta else "Decisão incorreta", motivo]
+	else:
+		resultado += "\nCaso sem avaliação."
+	resultado_decisao.text = resultado
+	resultado_decisao.show()
+
+
+func _animar_reacao_candidato(aprovado: bool) -> void:
+	em_transicao = true
+	definir_expressao_candidato(2)
+	fala_candidato.text = "Consegui! Que alívio!" if aprovado else "Como assim? Tem certeza?"
+	fala_candidato.modulate.a = 0.0
+	fala_candidato.show()
+
+	var repouso := pessoa_sprite.position
+	pessoa_sprite.pivot_offset = pessoa_sprite.size * Vector2(0.5, 0.9)
+	var reacao := create_tween()
+	reacao.tween_property(fala_candidato, "modulate:a", 1.0, 0.16)
+	if aprovado:
+		var altura_salto := janela_guiche.size.y * 0.08
+		reacao.parallel().tween_property(pessoa_sprite, "position:y", repouso.y - altura_salto, 0.20).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		reacao.tween_callback(definir_expressao_candidato.bind(1))
+		reacao.tween_property(pessoa_sprite, "position:y", repouso.y, 0.25).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	else:
+		var recuo := janela_guiche.size.x * 0.06
+		reacao.parallel().tween_property(pessoa_sprite, "position:x", repouso.x - recuo, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		reacao.parallel().tween_property(pessoa_sprite, "rotation", -0.12, 0.18)
+		reacao.tween_callback(definir_expressao_candidato.bind(3))
+		reacao.tween_property(pessoa_sprite, "position:x", repouso.x, 0.24).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		reacao.parallel().tween_property(pessoa_sprite, "rotation", 0.0, 0.24)
+	reacao.tween_interval(0.35)
+	reacao.tween_callback(func():
+		em_transicao = false
+		if atendidos == CANDIDATOS_POR_TURNO:
+			btn_proximo.text = "RESUMO"
+		btn_proximo.disabled = false
+	)
+
+
 func _recolher_documentos_e_sair_candidato() -> void:
+	fala_candidato.hide()
 	var tela := get_viewport_rect().size
 	var pos_fresta := tela * pos_fresta_relativa
 	
 	for filho in area_documentos.get_children():
+		filho.bloquear_interacao()
 		var t_doc := create_tween()
 		t_doc.tween_property(filho, "position", pos_fresta, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 		t_doc.parallel().tween_property(filho, "modulate:a", 0.0, 0.25)
@@ -226,7 +336,10 @@ func _recolher_documentos_e_sair_candidato() -> void:
 	tween_saida.tween_callback(func():
 		pessoa_sprite.visible = false
 		tem_candidato_no_guiche = false
-		_avancar_fila_e_entrar_novo()
+		if atendidos == CANDIDATOS_POR_TURNO:
+			sobreposicao.mostrar_resumo(atendidos, acertos, avaliados)
+		else:
+			_avancar_fila_e_entrar_novo()
 	)
 
 
@@ -258,9 +371,10 @@ func _avancar_fila_e_entrar_novo() -> void:
 		t_entrar.parallel().tween_property(primeiro, "modulate:a", 0.0, 0.22).set_delay(0.06)
 		t_entrar.tween_callback(primeiro.queue_free)
 	
-	var novo_boneco := _criar_bonequinho()
-	novo_boneco.position = _obter_posicao_slot_fila(tamanho_fila)
-	bonecos_fila.append(novo_boneco)
+	if bonecos_fila.size() < mini(tamanho_fila, CANDIDATOS_POR_TURNO - atendidos - 1):
+		var novo_boneco := _criar_bonequinho()
+		novo_boneco.position = _obter_posicao_slot_fila(bonecos_fila.size())
+		bonecos_fila.append(novo_boneco)
 	
 	for i in range(bonecos_fila.size()):
 		var b: Control = bonecos_fila[i]
@@ -313,6 +427,9 @@ func _mostrar_candidato_do_buffer() -> void:
 	var pacote: Dictionary = fila_prontos.pop_front()
 	candidato_atual_id = pacote["id"]
 	dados_candidato_atual = pacote["dados"]
+	tem_candidato_no_guiche = true
+	decisao_registrada = false
+	ficha_atual = null
 	
 	# Assim que a pessoa atual entra no guichê, já dispara em background o carregamento da próxima!
 	_disparar_precarregamento_background()
@@ -323,7 +440,6 @@ func _mostrar_candidato_do_buffer() -> void:
 	if tex_candidato:
 		pessoa_sprite.texture = tex_candidato
 		pessoa_sprite.visible = true
-		tem_candidato_no_guiche = true
 		
 		var larg_janela := janela_guiche.size.x
 		var alt_janela := janela_guiche.size.y
@@ -367,6 +483,7 @@ func _entregar_documentos(pacote: Dictionary) -> void:
 		if tex:
 			var doc := CENA_DOCUMENTO.instantiate()
 			area_documentos.add_child(doc)
+			doc.ampliacao_solicitada.connect(_ampliar_documento)
 			var desvio_destino := Vector2(i * 22.0, i * 6.0)
 			doc.configurar(tex, info["tipo"], pos_fresta, false)
 			doc.animar_chegada(pos_fresta, pos_bandeja + desvio_destino, i * 0.12, 0.35)
@@ -375,6 +492,8 @@ func _entregar_documentos(pacote: Dictionary) -> void:
 	if tex_ficha:
 		var doc_ficha := CENA_DOCUMENTO.instantiate()
 		area_documentos.add_child(doc_ficha)
+		doc_ficha.ampliacao_solicitada.connect(_ampliar_documento)
+		ficha_atual = doc_ficha
 		var origem_ficha := Vector2(pos_ficha.x, tela.y + 50.0)
 		doc_ficha.configurar(tex_ficha, "ficha", origem_ficha, true)
 		doc_ficha.animar_chegada(origem_ficha, pos_ficha, 0.15, 0.45)
@@ -382,5 +501,29 @@ func _entregar_documentos(pacote: Dictionary) -> void:
 	var timer := get_tree().create_timer(0.6)
 	timer.timeout.connect(func():
 		em_transicao = false
-		btn_proximo.disabled = false
+		resultado_decisao.hide()
+		btn_aprovar.disabled = false
+		btn_reprovar.disabled = false
+		painel_decisao.show()
+		if atendidos == 0:
+			_atualizar_dica_primeiro_candidato()
 	)
+
+
+func _ampliar_documento(documento) -> void:
+	if em_transicao or sobreposicao.visible:
+		return
+
+	sobreposicao.mostrar_documento(documento)
+	if atendidos == 0:
+		documentos_consultados[documento.tipo_documento] = true
+		_atualizar_dica_primeiro_candidato()
+
+
+func _atualizar_dica_primeiro_candidato() -> void:
+	dica_turno.show()
+	for tipo in DICAS_DOCUMENTOS:
+		if not documentos_consultados.has(tipo):
+			dica_turno.text = DICAS_DOCUMENTOS[tipo]
+			return
+	dica_turno.text = "Terminou a conferência? Escolha Aprovar ou Reprovar."

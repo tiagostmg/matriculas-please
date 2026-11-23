@@ -3,11 +3,30 @@
 [ext_resource type="Texture2D" uid="uid://bfrwuh6vfddh6" path="res://assets/background/4.jpeg" id="2_1b3iq"]
 [ext_resource type="FontFile" uid="uid://b3wegulbobpjo" path="res://assets/fonts/PressStart2P.ttf" id="2_font"]
 [ext_resource type="Script" uid="uid://bls1qhpk6uevj" path="res://scripts/jogo.gd" id="3_jogoscript"]
+[ext_resource type="FontFile" path="res://assets/fonts/VT323.ttf" id="4_fonte"]
+[ext_resource type="PackedScene" path="res://scenes/sobreposicao_turno.tscn" id="5_sobreposicao"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_normal"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
 bg_color = Color(1, 1, 1, 0.1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aprovar"]
+bg_color = Color(0.13, 0.36, 0.25, 1)
+border_width_bottom = 3
+border_color = Color(0.07, 0.19, 0.14, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reprovar"]
+bg_color = Color(0.54, 0.19, 0.2, 1)
+border_width_bottom = 3
+border_color = Color(0.29, 0.11, 0.12, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_resultado"]
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+bg_color = Color(0.11, 0.16, 0.23, 0.96)
 
 [node name="Jogo" type="Control" unique_id=1871506705]
 layout_mode = 3
@@ -54,6 +73,22 @@ anchor_bottom = 1.0
 expand_mode = 1
 stretch_mode = 5
 
+[node name="FalaCandidato" type="Label" parent="Janela"]
+visible = false
+layout_mode = 1
+anchor_left = 0.04
+anchor_top = 0.96
+anchor_right = 0.96
+anchor_bottom = 0.96
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4_fonte")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_resultado")
+horizontal_alignment = 1
+autowrap_mode = 3
+
 [node name="AreaDocumentos" type="Control" parent="." unique_id=35531405]
 layout_mode = 1
 anchors_preset = 15
@@ -76,12 +111,100 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0.24, 0.17, 0.08, 1)
 theme_override_colors/font_pressed_color = Color(0.15, 0.1, 0.04, 1)
 theme_override_colors/font_hover_color = Color(0.15, 0.1, 0.04, 1)
+theme_override_colors/font_disabled_color = Color(0.33, 0.25, 0.15, 0.7)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 9
 theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_normal")
+disabled = true
 text = "PRÓXIMO"
+
+[node name="PainelTurno" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 300.0
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="Cabecalho" type="HBoxContainer" parent="PainelTurno"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="Manual" type="Button" parent="PainelTurno/Cabecalho"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_fonts/font = ExtResource("4_fonte")
+theme_override_font_sizes/font_size = 22
+text = "Manual de balcão"
+
+[node name="Progresso" type="Label" parent="PainelTurno/Cabecalho"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("4_fonte")
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("StyleBoxFlat_resultado")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Dica" type="Label" parent="PainelTurno"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_fonte")
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("StyleBoxFlat_resultado")
+autowrap_mode = 3
+
+[node name="PainelDecisao" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -276.0
+offset_top = 16.0
+offset_right = -16.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="Botoes" type="HBoxContainer" parent="PainelDecisao"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="Aprovar" type="Button" parent="PainelDecisao/Botoes"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+theme_override_fonts/font = ExtResource("4_fonte")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_aprovar")
+text = "Aprovar"
+
+[node name="Reprovar" type="Button" parent="PainelDecisao/Botoes"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+theme_override_fonts/font = ExtResource("4_fonte")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_reprovar")
+text = "Reprovar"
+
+[node name="Resultado" type="Label" parent="PainelDecisao"]
+visible = false
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_fonte")
+theme_override_font_sizes/font_size = 23
+theme_override_styles/normal = SubResource("StyleBoxFlat_resultado")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="SobreposicaoTurno" parent="." instance=ExtResource("5_sobreposicao")]
+layout_mode = 1
 
 [connection signal="pressed" from="BtnProximo" to="." method="_on_btn_proximo_pressed"]

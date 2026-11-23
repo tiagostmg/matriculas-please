@@ -17,7 +17,9 @@ import glob
 import random
 import json
 import base64
+import shutil
 import subprocess
+from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
@@ -196,10 +198,24 @@ def image_to_base64(path):
     return f"data:image/{ext};base64,{data}"
 
 
+def find_chrome():
+    chrome = shutil.which("google-chrome") or shutil.which("chrome")
+    if chrome:
+        return chrome
+    if os.name == "nt":
+        for variable in ("ProgramFiles", "ProgramFiles(x86)", "LOCALAPPDATA"):
+            root = os.environ.get(variable)
+            if root:
+                chrome = Path(root) / "Google" / "Chrome" / "Application" / "chrome.exe"
+                if chrome.is_file():
+                    return str(chrome)
+    raise FileNotFoundError("Google Chrome não encontrado.")
+
+
 def render_html_to_png(html_path, png_path, width, height):
     """Renderiza um arquivo HTML para PNG usando o Google Chrome headless garantindo fontes carregadas e fundo transparente"""
     cmd = [
-        "google-chrome",
+        find_chrome(),
         "--headless=new",
         "--no-sandbox",
         "--disable-gpu",
@@ -211,7 +227,7 @@ def render_html_to_png(html_path, png_path, width, height):
         "--run-all-compositor-stages-before-draw",
         f"--screenshot={png_path}",
         f"--window-size={width},{height}",
-        f"file://{html_path}"
+        Path(html_path).resolve().as_uri()
     ]
     subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
 

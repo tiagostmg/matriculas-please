@@ -1,0 +1,136 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/sobreposicao_turno.gd" id="1_script"]
+[ext_resource type="FontFile" path="res://assets/fonts/VT323.ttf" id="2_fonte"]
+[ext_resource type="PackedScene" path="res://scenes/documento.tscn" id="3_documento"]
+
+[sub_resource type="Theme" id="Theme_painel"]
+default_font = ExtResource("2_fonte")
+default_font_size = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_painel"]
+content_margin_left = 20.0
+content_margin_top = 16.0
+content_margin_right = 20.0
+content_margin_bottom = 16.0
+bg_color = Color(0.11, 0.16, 0.23, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.41, 0.55, 0.68, 1)
+
+[node name="SobreposicaoTurno" type="ColorRect"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.03, 0.05, 0.09, 0.84)
+theme = SubResource("Theme_painel")
+script = ExtResource("1_script")
+
+[node name="Painel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.10
+anchor_top = 0.05
+anchor_right = 0.90
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_painel")
+
+[node name="Conteudo" type="VBoxContainer" parent="Painel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Cabecalho" type="HBoxContainer" parent="Painel/Conteudo"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Titulo" type="Label" parent="Painel/Conteudo/Cabecalho"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+autowrap_mode = 3
+
+[node name="Fechar" type="Button" parent="Painel/Conteudo/Cabecalho"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 38)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Fechar (Esc)"
+
+[node name="Manual" type="ScrollContainer" parent="Painel/Conteudo"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Regras" type="Label" parent="Painel/Conteudo/Manual"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Arraste os documentos da bandeja para a mesa. Use dois cliques para ampliar um documento e pressione Esc para voltar à mesa.
+
+Identidade
+Compare a foto com a pessoa no guichê e o nome com a ficha. Confira a validade para o ano letivo de 2026 e procure rasuras.
+
+Convocação do vestibular
+Confira se a pessoa foi convocada para o mesmo curso da ficha e se a nota atinge o corte mostrado no documento.
+
+Histórico escolar
+Confira a conclusão do ensino médio, as notas e o carimbo oficial. Atenção a datas futuras e alterações à mão.
+
+Parecer de matrícula
+Aprove quando os documentos estiverem regulares. Reprove se houver uma irregularidade."
+autowrap_mode = 3
+
+[node name="Proporcao" type="AspectRatioContainer" parent="Painel/Conteudo"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CopiaDocumento" parent="Painel/Conteudo/Proporcao" instance=ExtResource("3_documento")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Resumo" type="VBoxContainer" parent="Painel/Conteudo"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="Totais" type="Label" parent="Painel/Conteudo/Resumo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Acoes" type="HBoxContainer" parent="Painel/Conteudo/Resumo"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="NovoTurno" type="Button" parent="Painel/Conteudo/Resumo/Acoes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Novo turno"
+
+[node name="Menu" type="Button" parent="Painel/Conteudo/Resumo/Acoes"]
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Menu"
+
+[connection signal="pressed" from="Painel/Conteudo/Cabecalho/Fechar" to="." method="_fechar"]
+[connection signal="pressed" from="Painel/Conteudo/Resumo/Acoes/NovoTurno" to="." method="_on_novo_turno_pressed"]
+[connection signal="pressed" from="Painel/Conteudo/Resumo/Acoes/Menu" to="." method="_on_menu_pressed"]
