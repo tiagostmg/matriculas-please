@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/carimbo_ferramenta.gd" id="1_script"]
+[ext_resource type="FontFile" path="res://assets/fonts/VT323.ttf" id="2_fonte"]
+
+[node name="Carimbo" type="Control"]
+custom_minimum_size = Vector2(88, 92)
+tooltip_text = "Clique para selecionar"
+script = ExtResource("1_script")
+
+[node name="Rotulo" type="Label" parent="."]
+layout_mode = 1
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -26.0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("2_fonte")
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+vertical_alignment = 1

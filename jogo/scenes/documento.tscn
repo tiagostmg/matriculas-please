@@ -5,6 +5,18 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_carimbo"]
 bg_color = Color(0.94, 0.92, 0.88, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_alvo"]
+bg_color = Color(1, 0.92, 0.67, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.69, 0.44, 0.13, 1)
 
 [node name="Documento" type="TextureRect" unique_id=712839102]
 offset_right = 250.0
@@ -13,6 +25,29 @@ mouse_default_cursor_shape = 2
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("1_docscript")
+
+[node name="AlvoCarimbo" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchor_left = 0.055
+anchor_top = 0.82
+anchor_right = 0.945
+anchor_bottom = 0.932
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_alvo")
+
+[node name="Rotulo" type="Label" parent="AlvoCarimbo"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.30, 0.19, 0.06, 1)
+theme_override_fonts/font = ExtResource("2_fonte")
+theme_override_font_sizes/font_size = 22
+text = "Carimbe aqui"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Carimbo" type="Label" parent="."]
 visible = false

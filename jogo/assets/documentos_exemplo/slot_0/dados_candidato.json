@@ -1,22 +1,24 @@
 {
   "personagem_id": "43",
-  "personagem_foto_png": "/home/tiago/dev/narak/sprites/personagens-64/43/sprite_01.png",
+  "personagem_foto_png": "sprites/personagens-64/43/sprite_01.png",
   "personagem_sprites": [
-    "/home/tiago/dev/narak/sprites/personagens-64/43/sprite_01.png",
-    "/home/tiago/dev/narak/sprites/personagens-64/43/sprite_02.png",
-    "/home/tiago/dev/narak/sprites/personagens-64/43/sprite_03.png"
+    "sprites/personagens-64/43/sprite_01.png",
+    "sprites/personagens-64/43/sprite_02.png",
+    "sprites/personagens-64/43/sprite_03.png"
   ],
   "rg_foto_personagem_id": "43",
-  "rg_foto_png": "/home/tiago/dev/narak/sprites/personagens-64/43/sprite_01.png",
-  "candidato": "Heloísa Almeida",
-  "rg_nome": "Heloísa Almeida",
-  "curso": "Administração",
-  "vestibular_curso": "Administração",
-  "nota_vestibular": 9.7,
+  "rg_foto_png": "sprites/personagens-64/43/sprite_01.png",
+  "candidato": "Helena Alves",
+  "rg_nome": "Helena Alves",
+  "curso": "Ciência da Computação",
+  "vestibular_curso": "Ciência da Computação",
+  "turno": "Integral",
+  "vestibular_turno": "Integral",
+  "nota_vestibular": 9.1,
   "nota_corte": 7.0,
   "status_vestibular": "CONVOCADO - 1ª CHAMADA",
-  "validade_rg": 2029,
+  "validade_rg": 2030,
   "carimbo_ensino_medio": true,
-  "tem_fraude": true,
-  "descricao_fraude": "Histórico adulterado: ano de conclusão futuro (2027) foi tachado e corrigido à mão para 2024."
+  "tem_fraude": false,
+  "descricao_fraude": "Nenhuma. Documentação do candidato 100% regular."
 }

@@ -79,13 +79,13 @@ Identidade
 Compare a foto com a pessoa no guichê e o nome com a ficha. Confira a validade para o ano letivo de 2026 e procure rasuras.
 
 Convocação do vestibular
-Confira se a pessoa foi convocada para o mesmo curso da ficha e se a nota atinge o corte mostrado no documento.
+Confira se o curso e o turno da convocação coincidem com a ficha e se a nota atinge o corte mostrado no documento.
 
 Histórico escolar
 Confira a conclusão do ensino médio, as notas e o carimbo oficial. Atenção a datas futuras e alterações à mão.
 
 Parecer de matrícula
-Aprove quando os documentos estiverem regulares. Reprove se houver uma irregularidade."
+Abra a gaveta pela seta à direita. Clique no carimbo escolhido e depois na área destacada da ficha. Aprove documentos regulares e reprove se houver alguma irregularidade."
 autowrap_mode = 3
 
 [node name="Proporcao" type="AspectRatioContainer" parent="Painel/Conteudo"]

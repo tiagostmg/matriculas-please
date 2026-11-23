@@ -21,7 +21,7 @@ func _ready() -> void:
 
 
 func _on_btn_iniciar_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/jogo.tscn")
+	get_tree().change_scene_to_file("res://scenes/abertura.tscn")
 
 
 func _on_btn_opcoes_pressed() -> void:

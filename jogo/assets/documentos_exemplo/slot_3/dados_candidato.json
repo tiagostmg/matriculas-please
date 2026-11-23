@@ -1,22 +1,24 @@
 {
   "personagem_id": "37",
-  "personagem_foto_png": "/home/tiago/dev/narak/sprites/personagens-64/37/sprite_01.png",
+  "personagem_foto_png": "sprites/personagens-64/37/sprite_01.png",
   "personagem_sprites": [
-    "/home/tiago/dev/narak/sprites/personagens-64/37/sprite_01.png",
-    "/home/tiago/dev/narak/sprites/personagens-64/37/sprite_02.png",
-    "/home/tiago/dev/narak/sprites/personagens-64/37/sprite_03.png"
+    "sprites/personagens-64/37/sprite_01.png",
+    "sprites/personagens-64/37/sprite_02.png",
+    "sprites/personagens-64/37/sprite_03.png"
   ],
   "rg_foto_personagem_id": "37",
-  "rg_foto_png": "/home/tiago/dev/narak/sprites/personagens-64/37/sprite_01.png",
-  "candidato": "Heloísa Martins",
-  "rg_nome": "Heloísa Martins",
-  "curso": "Engenharia de Software",
-  "vestibular_curso": "Engenharia de Software",
-  "nota_vestibular": 9.1,
+  "rg_foto_png": "sprites/personagens-64/37/sprite_01.png",
+  "candidato": "Laura Almeida",
+  "rg_nome": "Laura Almeida",
+  "curso": "Medicina",
+  "vestibular_curso": "Medicina",
+  "turno": "Integral",
+  "vestibular_turno": "Vespertino",
+  "nota_vestibular": 8.2,
   "nota_corte": 7.0,
   "status_vestibular": "CONVOCADO - 1ª CHAMADA",
-  "validade_rg": 2023,
+  "validade_rg": 2031,
   "carimbo_ensino_medio": true,
   "tem_fraude": true,
-  "descricao_fraude": "Identidade adulterada: ano de validade vencido (2023) foi tachado e alterado à mão para 2028."
+  "descricao_fraude": "Vestibular divergente: turno vespertino na convocação e integral na ficha."
 }

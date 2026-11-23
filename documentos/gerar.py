@@ -45,6 +45,31 @@ LAST_NAMES = [
     "Silva", "Santos", "Oliveira", "Souza", "Rodrigues", "Ferreira", "Alves", "Pereira", "Lima", "Gomes",
     "Costa", "Ribeiro", "Martins", "Carvalho", "Almeida", "Lopes", "Soares", "Fernandes", "Vieira", "Barbosa"
 ]
+SIMILAR_LAST_NAMES = {
+    "Souza": "Sousa",
+    "Rodrigues": "Rodriguez",
+    "Gomes": "Gomez",
+    "Lopes": "Lopez",
+    "Barbosa": "Barboza",
+}
+SUBTLE_FLAWS = (
+    "rg_nome_divergente",
+    "rg_vencido",
+    "vestibular_nota_baixa",
+    "vestibular_curso_divergente",
+    "vestibular_turno_divergente",
+    "historico_sem_carimbo",
+)
+VISIBLE_FLAWS = (
+    "rg_tachado",
+    "rg_foto_divergente",
+    "vestibular_tachado",
+    "vestibular_nota_tachada",
+    "vestibular_reprovado",
+    "historico_tachado",
+    "historico_ano_tachado",
+    "ensino_medio_incompleto",
+)
 COURSES = {
     "Medicina": {"corte": 7.0, "turno": "Integral", "vagas": 40},
     "Direito": {"corte": 7.0, "turno": "Matutino", "vagas": 60},
@@ -259,9 +284,20 @@ def generate_all_documents(photo_target=None, output_dir="output_docs", force_fl
     rg_photo_png = character["photo_png"]
     rg_photo_char_id = character["id"]
 
+    chosen_flaw = force_flaw
+    if force_flaw in ("nenhuma", "regular", "none"):
+        chosen_flaw = None
+    elif force_flaw is None:
+        roll = random.random()
+        if roll < 0.35:
+            chosen_flaw = random.choice(SUBTLE_FLAWS)
+        elif roll < 0.50:
+            chosen_flaw = random.choice(VISIBLE_FLAWS)
+
     # Sorteia dados compatíveis com o personagem
     first = pick_first_name_for_character(character["id"])
-    last = random.choice(LAST_NAMES)
+    last_names = tuple(SIMILAR_LAST_NAMES) if chosen_flaw == "rg_nome_divergente" else LAST_NAMES
+    last = random.choice(last_names)
     nome = f"{first} {last}"
     mae = f"{random.choice(FEMALE_NAMES)} {last}"
     pai = f"{random.choice(MALE_NAMES)} {last}"
@@ -287,6 +323,7 @@ def generate_all_documents(photo_target=None, output_dir="output_docs", force_fl
     nome_oficial = nome
     nome_rg = nome
     vestibular_curso = curso
+    vestibular_turno = curso_info["turno"]
     vest_nota_html = f"{nota_vestibular:.1f}"
 
     # Preparação das 4 Disciplinas do Ensino Médio
@@ -301,38 +338,13 @@ def generate_all_documents(photo_target=None, output_dir="output_docs", force_fl
         nota_subj = round(random.uniform(7.0, 9.8), 1)
         disciplinas_data.append({"disciplina": subj, "media": f"{nota_subj:.1f}", "situacao": "APROVADO"})
 
-    # Tratamento de Fraudes nos Documentos do Candidato
-    available_candidate_flaws = [
-        "rg_tachado",
-        "rg_vencido",
-        "rg_nome_divergente",
-        "rg_foto_divergente",
-        "vestibular_tachado",
-        "vestibular_nota_tachada",
-        "vestibular_reprovado",
-        "vestibular_nota_baixa",
-        "vestibular_curso_divergente",
-        "historico_tachado",
-        "historico_ano_tachado",
-        "historico_sem_carimbo",
-        "ensino_medio_incompleto"
-    ]
-
-    if force_flaw in ["nenhuma", "regular", "none"]:
-        chosen_flaw = None
-    elif force_flaw is None and random.random() < 0.5:
-        chosen_flaw = random.choice(available_candidate_flaws)
-    else:
-        chosen_flaw = force_flaw
-
     flaw_desc = "Nenhuma. Documentação do candidato 100% regular."
     val_ano_html = str(ano_val_rg)
     vest_status_titulo = f"★ {status_vest} ★"
     vest_status_sub = status_sub
 
     if chosen_flaw == "rg_nome_divergente":
-        sobrenome_falso = random.choice([l for l in LAST_NAMES if l != last])
-        nome_rg = f"{first} {sobrenome_falso}"
+        nome_rg = f"{first} {SIMILAR_LAST_NAMES[last]}"
         flaw_desc = f"Identidade irregular: Nome no RG ({nome_rg.upper()}) diverge do cadastro da Ficha ({nome_oficial.upper()})."
     elif chosen_flaw == "rg_foto_divergente":
         all_chars = [c for c in list_available_characters() if c["id"] != character["id"]]
@@ -342,8 +354,7 @@ def generate_all_documents(photo_target=None, output_dir="output_docs", force_fl
             rg_photo_char_id = impostor["id"]
         flaw_desc = f"Identidade irregular: Foto 3x4 no RG (personagem {rg_photo_char_id}) não corresponde ao candidato (personagem {character['id']})."
     elif chosen_flaw == "rg_vencido":
-        ano_val_rg = random.randint(2021, 2025)
-        val_class = "expired"
+        ano_val_rg = 2025
         val_ano_html = str(ano_val_rg)
         flaw_desc = f"Identidade vencida: validade {ano_val_rg} anterior a 2026."
     elif chosen_flaw == "rg_tachado":
@@ -364,16 +375,21 @@ def generate_all_documents(photo_target=None, output_dir="output_docs", force_fl
         vest_status_sub = '<span class="strike-fraud">NÃO APROVADO</span> <span class="handwritten-fraud">HOMOLOGADO</span>'
         flaw_desc = "Vestibular adulterado: status original 'LISTA DE ESPERA' foi tachado e adulterado para 'CONVOCADO' à mão."
     elif chosen_flaw == "vestibular_nota_tachada":
+        nota_vestibular = 5.2
         vest_nota_html = '<span class="strike-fraud">5.2</span> <span class="handwritten-fraud">7.8</span>'
         flaw_desc = "Vestibular adulterado: nota insuficiente (5.2) foi tachada e adulterada com caneta para 7.8."
     elif chosen_flaw == "vestibular_nota_baixa":
-        nota_vestibular = round(random.uniform(4.0, 6.8), 1)
+        nota_vestibular = round(corte - random.choice((0.1, 0.2)), 1)
         vest_nota_html = f"{nota_vestibular:.1f}"
         flaw_desc = f"Vestibular irregular: nota ({nota_vestibular:.1f}) inferior à nota de corte ({corte:.1f})."
     elif chosen_flaw == "vestibular_curso_divergente":
         outros_cursos = [c for c in COURSES.keys() if c != curso]
         vestibular_curso = random.choice(outros_cursos)
         flaw_desc = f"Vestibular divergente: convocado para {vestibular_curso.upper()}, mas requerendo matrícula para {curso.upper()}."
+    elif chosen_flaw == "vestibular_turno_divergente":
+        turnos = dict.fromkeys(info["turno"] for info in COURSES.values())
+        vestibular_turno = random.choice([turno for turno in turnos if turno != curso_info["turno"]])
+        flaw_desc = f"Vestibular divergente: turno {vestibular_turno.lower()} na convocação e {curso_info['turno'].lower()} na ficha."
     elif chosen_flaw == "historico_tachado":
         alvo = random.choice(disciplinas_data)
         alvo["media"] = '<span class="strike-fraud">4.5</span> <span class="handwritten-fraud">7.5</span>'
@@ -440,7 +456,7 @@ def generate_all_documents(photo_target=None, output_dir="output_docs", force_fl
     vest_replacements = {
         "{{NOME}}": nome_oficial.upper(),
         "{{CURSO}}": vestibular_curso.upper(),
-        "{{TURNO}}": curso_info["turno"].upper(),
+        "{{TURNO}}": vestibular_turno.upper(),
         "{{NOTA_VESTIBULAR}}": vest_nota_html,
         "{{NOTA_CORTE}}": f"{corte:.1f}",
         "{{CLASSIFICACAO}}": f"{random.randint(1, curso_info['vagas']):02d}",
@@ -471,11 +487,7 @@ def generate_all_documents(photo_target=None, output_dir="output_docs", force_fl
         <span class="seal-dept">SEC. EDUCAÇÃO<br>AUTÊNTICO</span>
         <span class="seal-sub">VISTO OFICIAL</span>
       </div>
-    """ if tem_carimbo_escola else """
-      <div style="border: 2px dashed #aa1e1e; padding: 6px 10px; color: #aa1e1e; font-family: var(--font-pixel); font-size: 7px; text-align: center;">
-        [!] CARIMBO NÃO LOCALIZADO
-      </div>
-    """
+    """ if tem_carimbo_escola else ""
 
     hist_replacements = {
         "{{ESCOLA}}": random.choice(SCHOOLS).upper(),
@@ -544,6 +556,8 @@ def generate_all_documents(photo_target=None, output_dir="output_docs", force_fl
         "rg_nome": nome_rg,
         "curso": curso,
         "vestibular_curso": vestibular_curso,
+        "turno": curso_info["turno"],
+        "vestibular_turno": vestibular_turno,
         "nota_vestibular": nota_vestibular,
         "nota_corte": corte,
         "status_vestibular": status_vest,

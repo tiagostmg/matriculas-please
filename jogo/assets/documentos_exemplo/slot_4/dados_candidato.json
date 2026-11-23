@@ -1,0 +1,24 @@
+{
+  "personagem_id": "04",
+  "personagem_foto_png": "sprites/personagens-64/04/sprite_01.png",
+  "personagem_sprites": [
+    "sprites/personagens-64/04/sprite_01.png",
+    "sprites/personagens-64/04/sprite_02.png",
+    "sprites/personagens-64/04/sprite_03.png"
+  ],
+  "rg_foto_personagem_id": "04",
+  "rg_foto_png": "sprites/personagens-64/04/sprite_01.png",
+  "candidato": "Valentina Silva",
+  "rg_nome": "Valentina Silva",
+  "curso": "Direito",
+  "vestibular_curso": "Direito",
+  "turno": "Matutino",
+  "vestibular_turno": "Matutino",
+  "nota_vestibular": 6.9,
+  "nota_corte": 7.0,
+  "status_vestibular": "CONVOCADO - 1ª CHAMADA",
+  "validade_rg": 2029,
+  "carimbo_ensino_medio": true,
+  "tem_fraude": true,
+  "descricao_fraude": "Vestibular irregular: nota (6.9) inferior à nota de corte (7.0)."
+}

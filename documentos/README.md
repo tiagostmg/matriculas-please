@@ -25,7 +25,7 @@ Quando um candidato traz documentação adulterada, ela pode conter **rasuras / 
 - **Histórico com Nota Tachada**: Nota insuficiente (ex: `4.5` ou `REPROVADO`) riscada e sobrescrita com caneta azul como `7.5` `APROVADO`.
 - **RG com Validade Tachada**: Ano de validade vencido (ex: `2023`) riscado e puxado à mão para `2028`.
 - **Vestibular com Status Tachado**: `LISTA DE ESPERA` tachado com régua/caneta e escrito `CONVOCADO`.
-- **Outras Irregularidades**: Documento vencido, falta de carimbo oficial da Secretaria, nome divergente do cadastro ou nota abaixo do corte 7.0.
+- **Irregularidades sutis**: Sobrenomes parecidos com uma letra diferente entre o RG e a ficha, turno divergente, validade vencida, carimbo ausente ou nota pouco abaixo do corte 7.0.
 - **Normalmente apenas 1 documento falso por vez** para manter a investigação justa e focada.
 
 ---

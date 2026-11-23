@@ -1,12 +1,14 @@
 extends Control
 
+enum Expressao { FELIZ = 1, SURPRESO = 2, BRAVO = 3 }
+
 const CENA_DOCUMENTO := preload("res://scenes/documento.tscn")
 const SCRIPT_BONEQUINHO := preload("res://scripts/bonequinho_fila.gd")
 const CANDIDATOS_POR_TURNO := 5
 const DICAS_DOCUMENTOS := {
 	"rg": "Abra a identidade com dois cliques. Compare a foto com o rosto no guichê e confira a validade.",
 	"ficha": "Abra a ficha e compare o nome com o da identidade.",
-	"vestibular": "Abra a convocação. Compare o curso com a ficha e confira a nota de corte.",
+	"vestibular": "Abra a convocação. Compare o curso e o turno com a ficha e confira a nota de corte.",
 	"historico": "Abra o histórico. Confira a conclusão do ensino médio e o carimbo oficial.",
 }
 
@@ -16,10 +18,14 @@ const DICAS_DOCUMENTOS := {
 @onready var fala_candidato: Label = $Janela/FalaCandidato
 @onready var area_documentos: Control = $AreaDocumentos
 @onready var btn_proximo: Button = $BtnProximo
-@onready var painel_decisao: VBoxContainer = $PainelDecisao
-@onready var btn_aprovar: Button = $PainelDecisao/Botoes/Aprovar
-@onready var btn_reprovar: Button = $PainelDecisao/Botoes/Reprovar
-@onready var resultado_decisao: Label = $PainelDecisao/Resultado
+@onready var area_carimbos: Control = $AreaCarimbos
+@onready var painel_decisao: PanelContainer = $AreaCarimbos/PainelDecisao
+@onready var btn_carimbos: Button = $BtnCarimbos
+@onready var carimbo_aprovar = $AreaCarimbos/PainelDecisao/Conteudo/Ferramentas/Aprovar
+@onready var carimbo_reprovar = $AreaCarimbos/PainelDecisao/Conteudo/Ferramentas/Reprovar
+@onready var instrucao_carimbos: Label = $AreaCarimbos/PainelDecisao/Conteudo/Instrucao
+@onready var grade_balcao: Control = $GradeBalcao
+@onready var aviso_erro: PanelContainer = $GradeBalcao/AvisoErro
 @onready var btn_manual: Button = $PainelTurno/Cabecalho/Manual
 @onready var progresso_turno: Label = $PainelTurno/Cabecalho/Progresso
 @onready var dica_turno: Label = $PainelTurno/Dica
@@ -43,6 +49,9 @@ var atendidos: int = 0
 var avaliados: int = 0
 var acertos: int = 0
 var documentos_consultados: Dictionary = {}
+var animacao_aviso: Tween
+var animacao_carimbos: Tween
+var carimbo_selecionado: Control
 
 ## Lista dinâmica com todos os personagens (01 a 48) descobertos na pasta assets/personagens
 var todos_personagens: Array[String] = []
@@ -53,15 +62,16 @@ var dados_candidato_atual: Dictionary = {}
 ## Sistema de Pré-carregamento em Background (Fila de Buffer)
 var fila_prontos: Array[Dictionary] = []
 var gerando_em_background: bool = false
-var slot_buffer_indice: int = 0
 var aguardando_buffer_para_entrar: bool = false
 var candidatos_preparados: int = 0
 
 
 func _ready() -> void:
 	randomize()
-	btn_aprovar.pressed.connect(_registrar_decisao.bind(true))
-	btn_reprovar.pressed.connect(_registrar_decisao.bind(false))
+	painel_decisao.position.x = area_carimbos.size.x
+	btn_carimbos.toggled.connect(_alternar_carimbos)
+	carimbo_aprovar.selecao_solicitada.connect(_selecionar_carimbo)
+	carimbo_reprovar.selecao_solicitada.connect(_selecionar_carimbo)
 	btn_manual.pressed.connect(sobreposicao.mostrar_manual)
 	sobreposicao.reinicio_solicitado.connect(func(): get_tree().reload_current_scene())
 	sobreposicao.menu_solicitado.connect(func(): get_tree().change_scene_to_file("res://scenes/inicio.tscn"))
@@ -115,14 +125,13 @@ func _disparar_precarregamento_background() -> void:
 		return
 	
 	gerando_em_background = true
+	var slot := "slot_%d" % candidatos_preparados
 	candidatos_preparados += 1
 	var id_sorteado := _sortear_proximo_personagem()
-	slot_buffer_indice = (slot_buffer_indice + 1) % 4
 	
 	var dir_projeto := ProjectSettings.globalize_path("res://")
 	var dir_documentos := dir_projeto.path_join("../documentos").simplify_path()
 	var script_gerar := dir_documentos.path_join("gerar.py")
-	var slot := "slot_%d" % slot_buffer_indice
 	var pasta_saida := ProjectSettings.globalize_path("user://documentos/" + slot)
 	var pasta_exemplo := dir_projeto.path_join("assets/documentos_exemplo/" + slot)
 	
@@ -223,13 +232,80 @@ func _on_btn_proximo_pressed() -> void:
 	chamar_proximo_candidato()
 
 
+func _unhandled_key_input(event: InputEvent) -> void:
+	if is_instance_valid(carimbo_selecionado) and not sobreposicao.visible and event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
+		_limpar_selecao_carimbo()
+
+
+func _selecionar_carimbo(ferramenta: Control) -> void:
+	if em_transicao or sobreposicao.visible or not btn_carimbos.button_pressed:
+		return
+	if not ferramenta.disponivel or not is_instance_valid(ficha_atual):
+		return
+
+	if carimbo_selecionado == ferramenta:
+		_limpar_selecao_carimbo()
+		return
+
+	if is_instance_valid(carimbo_selecionado):
+		carimbo_selecionado.definir_selecionado(false)
+	carimbo_selecionado = ferramenta
+	ferramenta.definir_selecionado(true)
+	instrucao_carimbos.text = "Clique na ficha"
+	ficha_atual.move_to_front()
+	_desobstruir_alvo_carimbo()
+	ficha_atual.selecionar_carimbo(ferramenta)
+
+
+func _desobstruir_alvo_carimbo() -> void:
+	var alvo: Rect2 = ficha_atual.alvo_carimbo.get_global_rect()
+	var gaveta := area_carimbos.get_global_rect()
+	if not alvo.intersects(gaveta):
+		return
+
+	var tela := get_viewport_rect().size
+	var esquerda := gaveta.position.x - alvo.size.x - 10.0
+	var abaixo := gaveta.end.y + 10.0
+	if esquerda >= tela.x * 0.317:
+		ficha_atual.position.x += esquerda - alvo.position.x
+	elif abaixo + alvo.size.y <= tela.y - 8.0:
+		ficha_atual.position.y += abaixo - alvo.position.y
+
+
+func _limpar_selecao_carimbo() -> void:
+	if is_instance_valid(carimbo_selecionado):
+		carimbo_selecionado.definir_selecionado(false)
+	carimbo_selecionado = null
+	instrucao_carimbos.text = "Clique num carimbo"
+	if is_instance_valid(ficha_atual):
+		ficha_atual.selecionar_carimbo(null)
+
+
+func _alternar_carimbos(abertos: bool) -> void:
+	if sobreposicao.visible:
+		btn_carimbos.set_pressed_no_signal(not abertos)
+		return
+
+	if animacao_carimbos:
+		animacao_carimbos.kill()
+	btn_carimbos.tooltip_text = "Recolher carimbos" if abertos else "Mostrar carimbos"
+	painel_decisao.show()
+	var destino := 0.0 if abertos else area_carimbos.size.x
+	animacao_carimbos = painel_decisao.create_tween()
+	animacao_carimbos.tween_property(painel_decisao, "position:x", destino, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	if not abertos:
+		_limpar_selecao_carimbo()
+		animacao_carimbos.tween_callback(painel_decisao.hide)
+
+
 func chamar_proximo_candidato() -> void:
 	if em_transicao or sobreposicao.visible or (tem_candidato_no_guiche and not decisao_registrada):
 		return
 
 	em_transicao = true
 	btn_proximo.disabled = true
-	painel_decisao.hide()
+	btn_carimbos.button_pressed = false
 	dica_turno.hide()
 	
 	if tem_candidato_no_guiche:
@@ -239,62 +315,85 @@ func chamar_proximo_candidato() -> void:
 
 
 func _registrar_decisao(aprovado: bool) -> void:
-	if em_transicao or sobreposicao.visible or not tem_candidato_no_guiche or decisao_registrada:
+	if em_transicao or sobreposicao.visible or not btn_carimbos.button_pressed:
+		return
+	if not tem_candidato_no_guiche or decisao_registrada:
 		return
 
 	decisao_registrada = true
 	atendidos += 1
 	progresso_turno.text = "Atendidos %d/%d" % [atendidos, CANDIDATOS_POR_TURNO]
 	dica_turno.hide()
-	btn_aprovar.disabled = true
-	btn_reprovar.disabled = true
+	carimbo_aprovar.definir_disponivel(false)
+	carimbo_reprovar.definir_disponivel(false)
+	_limpar_selecao_carimbo()
 	if is_instance_valid(ficha_atual):
 		ficha_atual.carimbar(aprovado)
 		ficha_atual.move_to_front()
 	_animar_reacao_candidato(aprovado)
 
-	var resultado := "Matrícula aprovada" if aprovado else "Matrícula reprovada"
 	var tem_fraude: Variant = dados_candidato_atual.get("tem_fraude")
 	if tem_fraude is bool:
 		avaliados += 1
-		var decisao_correta: bool = aprovado != tem_fraude
-		if decisao_correta:
+		if aprovado != tem_fraude:
 			acertos += 1
-		var motivo := "Documentação regular."
-		if tem_fraude:
-			motivo = String(dados_candidato_atual.get("descricao_fraude", "")).strip_edges()
-			if motivo.is_empty():
-				motivo = "A documentação tem uma irregularidade."
-		resultado += "\n%s\n%s" % ["Decisão correta" if decisao_correta else "Decisão incorreta", motivo]
-	else:
-		resultado += "\nCaso sem avaliação."
-	resultado_decisao.text = resultado
-	resultado_decisao.show()
+		else:
+			_mostrar_aviso_erro()
+
+
+func _mostrar_aviso_erro() -> void:
+	aviso_erro.reset_size()
+	var inicio := Vector2(-aviso_erro.size.x * 0.5, -aviso_erro.size.y * 0.5)
+	inicio.x = maxf(inicio.x, 8.0 - grade_balcao.position.x)
+	aviso_erro.position = inicio
+	aviso_erro.modulate.a = 0.0
+	aviso_erro.show()
+
+	animacao_aviso = aviso_erro.create_tween()
+	animacao_aviso.tween_property(aviso_erro, "position:y", inicio.y - 54.0, 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	animacao_aviso.parallel().tween_property(aviso_erro, "modulate:a", 1.0, 0.16)
+	animacao_aviso.tween_interval(1.5)
+	animacao_aviso.tween_property(aviso_erro, "modulate:a", 0.0, 0.24)
+	animacao_aviso.tween_callback(aviso_erro.hide)
+
+
+func _ocultar_aviso_erro() -> void:
+	if animacao_aviso:
+		animacao_aviso.kill()
+		animacao_aviso = null
+	aviso_erro.hide()
 
 
 func _animar_reacao_candidato(aprovado: bool) -> void:
 	em_transicao = true
-	definir_expressao_candidato(2)
-	fala_candidato.text = "Consegui! Que alívio!" if aprovado else "Como assim? Tem certeza?"
+	definir_expressao_candidato(Expressao.SURPRESO)
 	fala_candidato.modulate.a = 0.0
-	fala_candidato.show()
 
 	var repouso := pessoa_sprite.position
 	pessoa_sprite.pivot_offset = pessoa_sprite.size * Vector2(0.5, 0.9)
 	var reacao := create_tween()
 	reacao.tween_property(fala_candidato, "modulate:a", 1.0, 0.16)
 	if aprovado:
+		fala_candidato.text = "Consegui! Que alívio!"
 		var altura_salto := janela_guiche.size.y * 0.08
 		reacao.parallel().tween_property(pessoa_sprite, "position:y", repouso.y - altura_salto, 0.20).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		reacao.tween_callback(definir_expressao_candidato.bind(1))
+		reacao.tween_callback(definir_expressao_candidato.bind(Expressao.FELIZ))
 		reacao.tween_property(pessoa_sprite, "position:y", repouso.y, 0.25).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	elif randi_range(0, 1) == 0:
+		fala_candidato.text = "Poxa... eu queria tanto essa vaga."
+		var descida := janela_guiche.size.y * 0.05
+		reacao.parallel().tween_property(pessoa_sprite, "position:y", repouso.y + descida, 0.35).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		reacao.parallel().tween_property(pessoa_sprite, "scale:y", 0.88, 0.35)
+		reacao.parallel().tween_property(pessoa_sprite, "rotation", 0.06, 0.35)
 	else:
+		fala_candidato.text = "Como assim? Tem certeza?"
 		var recuo := janela_guiche.size.x * 0.06
 		reacao.parallel().tween_property(pessoa_sprite, "position:x", repouso.x - recuo, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		reacao.parallel().tween_property(pessoa_sprite, "rotation", -0.12, 0.18)
-		reacao.tween_callback(definir_expressao_candidato.bind(3))
+		reacao.tween_callback(definir_expressao_candidato.bind(Expressao.BRAVO))
 		reacao.tween_property(pessoa_sprite, "position:x", repouso.x, 0.24).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 		reacao.parallel().tween_property(pessoa_sprite, "rotation", 0.0, 0.24)
+	fala_candidato.show()
 	reacao.tween_interval(0.35)
 	reacao.tween_callback(func():
 		em_transicao = false
@@ -317,9 +416,8 @@ func _recolher_documentos_e_sair_candidato() -> void:
 		t_doc.tween_callback(filho.queue_free)
 	
 	var larg_janela := janela_guiche.size.x
-	var alt_janela := janela_guiche.size.y
 	var pos_saida_x := larg_janela + 30.0
-	var pos_y_base := alt_janela * 0.05
+	var pos_y_base := pessoa_sprite.position.y
 	var duracao_saida := 0.55
 	
 	var tween_saida := create_tween()
@@ -337,6 +435,7 @@ func _recolher_documentos_e_sair_candidato() -> void:
 		pessoa_sprite.visible = false
 		tem_candidato_no_guiche = false
 		if atendidos == CANDIDATOS_POR_TURNO:
+			_ocultar_aviso_erro()
 			sobreposicao.mostrar_resumo(atendidos, acertos, avaliados)
 		else:
 			_avancar_fila_e_entrar_novo()
@@ -401,16 +500,16 @@ func _carregar_textura_png(caminho: String) -> Texture2D:
 	return null
 
 
-## Permite mudar a expressão do candidato atual no guichê:
-## 1 = Feliz (sprite_01), 2 = Surpreso/Assustado (sprite_02), 3 = Bravo (sprite_03)
-func definir_expressao_candidato(numero_foto: int) -> void:
+func definir_expressao_candidato(expressao: Expressao) -> bool:
 	if candidato_atual_id == "":
-		return
-	var nome_arquivo := "sprite_%02d.png" % clampi(numero_foto, 1, 3)
+		return false
+	var nome_arquivo := "sprite_%02d.png" % expressao
 	var caminho := "res://assets/personagens/" + candidato_atual_id + "/" + nome_arquivo
 	var tex := _carregar_textura_png(caminho)
-	if tex:
-		pessoa_sprite.texture = tex
+	if not tex:
+		return false
+	pessoa_sprite.texture = tex
+	return true
 
 
 func _entrar_candidato_na_janela() -> void:
@@ -424,6 +523,7 @@ func _entrar_candidato_na_janela() -> void:
 
 
 func _mostrar_candidato_do_buffer() -> void:
+	_ocultar_aviso_erro()
 	var pacote: Dictionary = fila_prontos.pop_front()
 	candidato_atual_id = pacote["id"]
 	dados_candidato_atual = pacote["dados"]
@@ -434,11 +534,10 @@ func _mostrar_candidato_do_buffer() -> void:
 	# Assim que a pessoa atual entra no guichê, já dispara em background o carregamento da próxima!
 	_disparar_precarregamento_background()
 	
-	# Sempre entra feliz (foto 1: sprite_01.png)
-	var caminho_feliz := "res://assets/personagens/" + candidato_atual_id + "/sprite_01.png"
-	var tex_candidato := _carregar_textura_png(caminho_feliz)
-	if tex_candidato:
-		pessoa_sprite.texture = tex_candidato
+	var expressao := Expressao.FELIZ if randi_range(0, 1) == 0 else Expressao.BRAVO
+	if definir_expressao_candidato(expressao):
+		pessoa_sprite.scale = Vector2.ONE
+		pessoa_sprite.rotation = 0.0
 		pessoa_sprite.visible = true
 		
 		var larg_janela := janela_guiche.size.x
@@ -493,6 +592,7 @@ func _entregar_documentos(pacote: Dictionary) -> void:
 		var doc_ficha := CENA_DOCUMENTO.instantiate()
 		area_documentos.add_child(doc_ficha)
 		doc_ficha.ampliacao_solicitada.connect(_ampliar_documento)
+		doc_ficha.carimbo_solicitado.connect(_registrar_decisao)
 		ficha_atual = doc_ficha
 		var origem_ficha := Vector2(pos_ficha.x, tela.y + 50.0)
 		doc_ficha.configurar(tex_ficha, "ficha", origem_ficha, true)
@@ -501,10 +601,8 @@ func _entregar_documentos(pacote: Dictionary) -> void:
 	var timer := get_tree().create_timer(0.6)
 	timer.timeout.connect(func():
 		em_transicao = false
-		resultado_decisao.hide()
-		btn_aprovar.disabled = false
-		btn_reprovar.disabled = false
-		painel_decisao.show()
+		carimbo_aprovar.definir_disponivel(true)
+		carimbo_reprovar.definir_disponivel(true)
 		if atendidos == 0:
 			_atualizar_dica_primeiro_candidato()
 	)
@@ -526,4 +624,4 @@ func _atualizar_dica_primeiro_candidato() -> void:
 		if not documentos_consultados.has(tipo):
 			dica_turno.text = DICAS_DOCUMENTOS[tipo]
 			return
-	dica_turno.text = "Terminou a conferência? Escolha Aprovar ou Reprovar."
+	dica_turno.text = "Abra a gaveta pela seta à direita. Clique num carimbo e depois no espaço destacado na ficha."

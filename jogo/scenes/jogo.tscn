@@ -5,21 +5,26 @@
 [ext_resource type="Script" uid="uid://bls1qhpk6uevj" path="res://scripts/jogo.gd" id="3_jogoscript"]
 [ext_resource type="FontFile" path="res://assets/fonts/VT323.ttf" id="4_fonte"]
 [ext_resource type="PackedScene" path="res://scenes/sobreposicao_turno.tscn" id="5_sobreposicao"]
+[ext_resource type="PackedScene" path="res://scenes/carimbo_ferramenta.tscn" id="6_carimbo"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_normal"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
 bg_color = Color(1, 1, 1, 0.1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aprovar"]
-bg_color = Color(0.13, 0.36, 0.25, 1)
-border_width_bottom = 3
-border_color = Color(0.07, 0.19, 0.14, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reprovar"]
-bg_color = Color(0.54, 0.19, 0.2, 1)
-border_width_bottom = 3
-border_color = Color(0.29, 0.11, 0.12, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gaveta"]
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0.17, 0.22, 0.31, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 4
+border_color = Color(0.36, 0.43, 0.56, 1)
+corner_radius_top_left = 7
+corner_radius_bottom_left = 7
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_resultado"]
 content_margin_left = 12.0
@@ -27,6 +32,21 @@ content_margin_top = 6.0
 content_margin_right = 12.0
 content_margin_bottom = 6.0
 bg_color = Color(0.11, 0.16, 0.23, 0.96)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aviso_erro"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0.21, 0.12, 0.15, 0.98)
+border_width_bottom = 2
+border_color = Color(0.72, 0.29, 0.30, 1)
+shadow_color = Color(0.04, 0.04, 0.07, 0.55)
+shadow_size = 3
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_icone_erro"]
+bg_color = Color(0.66, 0.22, 0.24, 1)
 
 [node name="Jogo" type="Control" unique_id=1871506705]
 layout_mode = 3
@@ -158,51 +178,101 @@ theme_override_font_sizes/font_size = 21
 theme_override_styles/normal = SubResource("StyleBoxFlat_resultado")
 autowrap_mode = 3
 
-[node name="PainelDecisao" type="VBoxContainer" parent="."]
+[node name="AreaCarimbos" type="Control" parent="."]
+clip_contents = true
+layout_mode = 1
+anchor_left = 0.975
+anchor_top = 0.493
+anchor_right = 0.975
+anchor_bottom = 0.493
+offset_left = -218.0
+offset_top = -73.0
+offset_bottom = 73.0
+mouse_filter = 2
+
+[node name="PainelDecisao" type="PanelContainer" parent="AreaCarimbos"]
 visible = false
 layout_mode = 1
-anchor_left = 1.0
+anchors_preset = 15
 anchor_right = 1.0
-offset_left = -276.0
-offset_top = 16.0
-offset_right = -16.0
-grow_horizontal = 0
-mouse_filter = 2
-theme_override_constants/separation = 6
+anchor_bottom = 1.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_gaveta")
 
-[node name="Botoes" type="HBoxContainer" parent="PainelDecisao"]
+[node name="Conteudo" type="VBoxContainer" parent="AreaCarimbos/PainelDecisao"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 6
 
-[node name="Aprovar" type="Button" parent="PainelDecisao/Botoes"]
-custom_minimum_size = Vector2(0, 40)
+[node name="Ferramentas" type="HBoxContainer" parent="AreaCarimbos/PainelDecisao/Conteudo"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Aprovar" parent="AreaCarimbos/PainelDecisao/Conteudo/Ferramentas" instance=ExtResource("6_carimbo")]
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_default_cursor_shape = 2
-theme_override_fonts/font = ExtResource("4_fonte")
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_aprovar")
-text = "Aprovar"
+aprovar = true
 
-[node name="Reprovar" type="Button" parent="PainelDecisao/Botoes"]
-custom_minimum_size = Vector2(0, 40)
+[node name="Reprovar" parent="AreaCarimbos/PainelDecisao/Conteudo/Ferramentas" instance=ExtResource("6_carimbo")]
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_default_cursor_shape = 2
-theme_override_fonts/font = ExtResource("4_fonte")
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_reprovar")
-text = "Reprovar"
 
-[node name="Resultado" type="Label" parent="PainelDecisao"]
+[node name="Instrucao" type="Label" parent="AreaCarimbos/PainelDecisao/Conteudo"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.91, 0.87, 0.73, 1)
+theme_override_fonts/font = ExtResource("4_fonte")
+theme_override_font_sizes/font_size = 20
+text = "Clique num carimbo"
+horizontal_alignment = 1
+
+[node name="BtnCarimbos" type="Button" parent="."]
+layout_mode = 1
+anchor_left = 0.975
+anchor_top = 0.444
+anchor_right = 1.0
+anchor_bottom = 0.542
+mouse_default_cursor_shape = 2
+tooltip_text = "Mostrar carimbos"
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_hover")
+toggle_mode = true
+
+[node name="GradeBalcao" type="Control" parent="."]
+layout_mode = 1
+anchor_left = 0.155
+anchor_top = 0.937
+anchor_right = 0.155
+anchor_bottom = 0.937
+mouse_filter = 2
+
+[node name="AvisoErro" type="PanelContainer" parent="GradeBalcao"]
 visible = false
+layout_mode = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_aviso_erro")
+
+[node name="Conteudo" type="HBoxContainer" parent="GradeBalcao/AvisoErro"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Icone" type="Label" parent="GradeBalcao/AvisoErro/Conteudo"]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_fonte")
 theme_override_font_sizes/font_size = 23
-theme_override_styles/normal = SubResource("StyleBoxFlat_resultado")
+theme_override_styles/normal = SubResource("StyleBoxFlat_icone_erro")
+text = "X"
 horizontal_alignment = 1
-autowrap_mode = 3
+vertical_alignment = 1
+
+[node name="Mensagem" type="Label" parent="GradeBalcao/AvisoErro/Conteudo"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_fonte")
+theme_override_font_sizes/font_size = 23
+text = "Decisão incorreta"
 
 [node name="SobreposicaoTurno" parent="." instance=ExtResource("5_sobreposicao")]
 layout_mode = 1
