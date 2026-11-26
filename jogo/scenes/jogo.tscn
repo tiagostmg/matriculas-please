@@ -6,6 +6,7 @@
 [ext_resource type="FontFile" path="res://assets/fonts/VT323.ttf" id="4_fonte"]
 [ext_resource type="PackedScene" path="res://scenes/sobreposicao_turno.tscn" id="5_sobreposicao"]
 [ext_resource type="PackedScene" path="res://scenes/carimbo_ferramenta.tscn" id="6_carimbo"]
+[ext_resource type="Script" path="res://scripts/sons_do_turno.gd" id="7_sons"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_normal"]
 
@@ -276,5 +277,8 @@ text = "Decisão incorreta"
 
 [node name="SobreposicaoTurno" parent="." instance=ExtResource("5_sobreposicao")]
 layout_mode = 1
+
+[node name="SonsDoTurno" type="Node" parent="."]
+script = ExtResource("7_sons")
 
 [connection signal="pressed" from="BtnProximo" to="." method="_on_btn_proximo_pressed"]

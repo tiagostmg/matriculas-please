@@ -126,6 +126,7 @@ mouse_default_cursor_shape = 2
 text = "Novo turno"
 
 [node name="Menu" type="Button" parent="Painel/Conteudo/Resumo/Acoes"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2

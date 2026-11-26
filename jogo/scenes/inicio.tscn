@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://w0g54k5sfeha" path="res://assets/background/inicio.jpeg" id="1_i3824"]
 [ext_resource type="Script" path="res://scripts/inicio.gd" id="2_script"]
+[ext_resource type="Script" path="res://scripts/sons_do_turno.gd" id="3_sons"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_normal"]
 
@@ -208,6 +209,10 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_fechar_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_fechar_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_fechar_hover")
 text = "VOLTAR"
+
+[node name="SonsDoMenu" type="Node" parent="."]
+script = ExtResource("3_sons")
+murmurio_ativo = false
 
 [connection signal="pressed" from="Botoes/BtnIniciar" to="." method="_on_btn_iniciar_pressed"]
 [connection signal="pressed" from="Botoes/BtnOpcoes" to="." method="_on_btn_opcoes_pressed"]

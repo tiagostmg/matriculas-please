@@ -2,6 +2,7 @@ extends TextureRect
 
 signal ampliacao_solicitada(documento: TextureRect)
 signal carimbo_solicitado(aprovado: bool)
+signal area_de_trabalho_alterada
 
 const CARIMBO_FERRAMENTA := preload("res://scripts/carimbo_ferramenta.gd")
 
@@ -15,6 +16,7 @@ const CARIMBO_FERRAMENTA := preload("res://scripts/carimbo_ferramenta.gd")
 var arrastando: bool = false
 var bloqueado_animacao: bool = false
 var offset_clique: Vector2 = Vector2.ZERO
+var offset_divisoria_x := 0.0
 var tamanho_base: Vector2 = Vector2(260, 340)
 var na_mesa: bool = false
 var deferido: bool = false
@@ -153,38 +155,39 @@ func _gui_input(event: InputEvent) -> void:
 			arrastando = true
 			move_to_front()
 			offset_clique = get_global_mouse_position() - global_position
+			# A referência permanece fixa durante o arraste, mesmo após redimensionar.
+			offset_divisoria_x = size.x * 0.5 - offset_clique.x
 		else:
 			arrastando = false
 
 
 func _process(_delta: float) -> void:
 	if arrastando:
-		var tela := get_viewport_rect().size
-		var limite_x_mesa := tela.x * 0.317 # Divisória entre o balcão azul e a mesa de madeira
-		var limite_topo_mesa := tela.y * 0.330 # Topo da mesa de madeira (não deixa subir para a rua)
-		var limite_topo_balcao := tela.y * 0.665 # Base do vidro do guichê (só permite ficar no balcão abaixo do vidro)
-		var limite_fundo_balcao := tela.y * 0.880 # Acima dos botões do balcão
-		
-		var nova_pos := get_global_mouse_position() - offset_clique
-		
-		# Verifica se está na zona da mesa (direita) ou do balcão (esquerda)
-		var centro_x := nova_pos.x + (size.x * 0.5)
-		var agora_na_mesa := centro_x >= limite_x_mesa
-		if agora_na_mesa != na_mesa:
-			na_mesa = agora_na_mesa
-			_atualizar_tamanho(true)
-			nova_pos = get_global_mouse_position() - offset_clique
-		
-		nova_pos.x = clampf(nova_pos.x, 0.0, tela.x - size.x)
-		
-		if na_mesa:
-			# Na mesa de madeira: pode ocupar toda a altura da mesa (do topo da mesa até o fim da tela)
-			nova_pos.y = clampf(nova_pos.y, limite_topo_mesa, tela.y - size.y)
-		else:
-			# Na esquerda (balcão): NUNCA pode subir para o vidro da janela, só fica na bancada abaixo do vidro
-			nova_pos.y = clampf(nova_pos.y, limite_topo_balcao, maxf(limite_topo_balcao, limite_fundo_balcao - size.y))
-		
-		global_position = nova_pos
+		_arrastar_para(get_global_mouse_position())
+
+
+func _arrastar_para(mouse: Vector2) -> void:
+	var tela := get_viewport_rect().size
+	var limite_x_mesa := tela.x * 0.317 # Divisória entre o balcão azul e a mesa de madeira
+	var limite_topo_mesa := tela.y * 0.330
+	var limite_topo_balcao := tela.y * 0.665 # Base do vidro do guichê
+	var limite_fundo_balcao := tela.y * 0.880 # Acima dos botões do balcão
+
+	var agora_na_mesa := mouse.x + offset_divisoria_x >= limite_x_mesa
+	var mudou_de_area := agora_na_mesa != na_mesa
+	if mudou_de_area:
+		na_mesa = agora_na_mesa
+		_atualizar_tamanho(true)
+
+	var nova_pos := mouse - offset_clique
+	nova_pos.x = clampf(nova_pos.x, 0.0, tela.x - size.x)
+	if na_mesa:
+		nova_pos.y = clampf(nova_pos.y, limite_topo_mesa, tela.y - size.y)
+	else:
+		nova_pos.y = clampf(nova_pos.y, limite_topo_balcao, maxf(limite_topo_balcao, limite_fundo_balcao - size.y))
+	global_position = nova_pos
+	if mudou_de_area:
+		area_de_trabalho_alterada.emit()
 
 
 func _atualizar_tamanho(manter_sob_mouse: bool) -> void:
