@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="jogo"
+config/name="Matrículas, Please!"
 run/main_scene="res://scenes/inicio.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"

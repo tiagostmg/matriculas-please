@@ -30,6 +30,8 @@ const DICAS_DOCUMENTOS := {
 @onready var progresso_turno: Label = $PainelTurno/Cabecalho/Progresso
 @onready var dica_turno: Label = $PainelTurno/Dica
 @onready var sobreposicao = $SobreposicaoTurno
+@onready var sons = $SonsDoTurno
+var saindo_do_resumo := false
 
 ## Quantidade de bonequinhos visíveis na fila lá fora
 @export var tamanho_fila: int = 10
@@ -73,8 +75,13 @@ func _ready() -> void:
 	carimbo_aprovar.selecao_solicitada.connect(_selecionar_carimbo)
 	carimbo_reprovar.selecao_solicitada.connect(_selecionar_carimbo)
 	btn_manual.pressed.connect(sobreposicao.mostrar_manual)
-	sobreposicao.reinicio_solicitado.connect(func(): get_tree().reload_current_scene())
-	sobreposicao.menu_solicitado.connect(func(): get_tree().change_scene_to_file("res://scenes/inicio.tscn"))
+	sobreposicao.leitura_aberta.connect(sons.tocar.bind(&"documento_abrir"))
+	sobreposicao.leitura_fechada.connect(sons.tocar.bind(&"documento_fechar"))
+	sobreposicao.opcao_resumo_destacada.connect(_tocar_chiado_resumo)
+	sobreposicao.reinicio_solicitado.connect(_sair_do_resumo.bind(get_tree().reload_current_scene))
+	sobreposicao.menu_solicitado.connect(
+		_sair_do_resumo.bind(get_tree().change_scene_to_file.bind("res://scenes/inicio.tscn"))
+	)
 	progresso_turno.text = "Atendidos 0/%d" % CANDIDATOS_POR_TURNO
 	dica_turno.text = "Clique em Próximo para chamar o primeiro candidato."
 	pessoa_sprite.visible = false
@@ -88,6 +95,19 @@ func _ready() -> void:
 	_inicializar_fila_externa()
 	em_transicao = false
 	btn_proximo.disabled = false
+
+
+func _tocar_chiado_resumo() -> void:
+	if not saindo_do_resumo:
+		sons.tocar(&"microfone")
+
+
+func _sair_do_resumo(acao: Callable) -> void:
+	if saindo_do_resumo:
+		return
+	saindo_do_resumo = true
+	var carimbo: Tween = sons.tocar(&"carimbo")
+	carimbo.finished.connect(func(): acao.call_deferred(), CONNECT_ONE_SHOT)
 
 
 func _descobrir_personagens() -> void:
@@ -287,6 +307,7 @@ func _alternar_carimbos(abertos: bool) -> void:
 		btn_carimbos.set_pressed_no_signal(not abertos)
 		return
 
+	sons.tocar(&"gaveta_abrir" if abertos else &"gaveta_fechar")
 	if animacao_carimbos:
 		animacao_carimbos.kill()
 	btn_carimbos.tooltip_text = "Recolher carimbos" if abertos else "Mostrar carimbos"
@@ -303,6 +324,8 @@ func chamar_proximo_candidato() -> void:
 	if em_transicao or sobreposicao.visible or (tem_candidato_no_guiche and not decisao_registrada):
 		return
 
+	if atendidos < CANDIDATOS_POR_TURNO:
+		sons.chamar_proximo()
 	em_transicao = true
 	btn_proximo.disabled = true
 	btn_carimbos.button_pressed = false
@@ -321,6 +344,7 @@ func _registrar_decisao(aprovado: bool) -> void:
 		return
 
 	decisao_registrada = true
+	sons.tocar(&"carimbo")
 	atendidos += 1
 	progresso_turno.text = "Atendidos %d/%d" % [atendidos, CANDIDATOS_POR_TURNO]
 	dica_turno.hide()
@@ -342,6 +366,7 @@ func _registrar_decisao(aprovado: bool) -> void:
 
 
 func _mostrar_aviso_erro() -> void:
+	sons.tocar(&"decisao_incorreta")
 	aviso_erro.reset_size()
 	var inicio := Vector2(-aviso_erro.size.x * 0.5, -aviso_erro.size.y * 0.5)
 	inicio.x = maxf(inicio.x, 8.0 - grade_balcao.position.x)
@@ -365,6 +390,7 @@ func _ocultar_aviso_erro() -> void:
 
 
 func _animar_reacao_candidato(aprovado: bool) -> void:
+	sons.tocar_reacao(aprovado, candidato_atual_id)
 	em_transicao = true
 	definir_expressao_candidato(Expressao.SURPRESO)
 	fala_candidato.modulate.a = 0.0
@@ -436,6 +462,8 @@ func _recolher_documentos_e_sair_candidato() -> void:
 		tem_candidato_no_guiche = false
 		if atendidos == CANDIDATOS_POR_TURNO:
 			_ocultar_aviso_erro()
+			sons.encerrar_ambiente()
+			sons.tocar(&"resumo")
 			sobreposicao.mostrar_resumo(atendidos, acertos, avaliados)
 		else:
 			_avancar_fila_e_entrar_novo()
@@ -583,6 +611,7 @@ func _entregar_documentos(pacote: Dictionary) -> void:
 			var doc := CENA_DOCUMENTO.instantiate()
 			area_documentos.add_child(doc)
 			doc.ampliacao_solicitada.connect(_ampliar_documento)
+			doc.area_de_trabalho_alterada.connect(sons.tocar.bind(&"papel_deslizar"))
 			var desvio_destino := Vector2(i * 22.0, i * 6.0)
 			doc.configurar(tex, info["tipo"], pos_fresta, false)
 			doc.animar_chegada(pos_fresta, pos_bandeja + desvio_destino, i * 0.12, 0.35)
@@ -592,6 +621,7 @@ func _entregar_documentos(pacote: Dictionary) -> void:
 		var doc_ficha := CENA_DOCUMENTO.instantiate()
 		area_documentos.add_child(doc_ficha)
 		doc_ficha.ampliacao_solicitada.connect(_ampliar_documento)
+		doc_ficha.area_de_trabalho_alterada.connect(sons.tocar.bind(&"papel_deslizar"))
 		doc_ficha.carimbo_solicitado.connect(_registrar_decisao)
 		ficha_atual = doc_ficha
 		var origem_ficha := Vector2(pos_ficha.x, tela.y + 50.0)

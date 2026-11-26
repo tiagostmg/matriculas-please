@@ -2,6 +2,9 @@ extends ColorRect
 
 signal reinicio_solicitado
 signal menu_solicitado
+signal opcao_resumo_destacada
+signal leitura_aberta
+signal leitura_fechada
 
 const TITULOS_DOCUMENTOS := {
 	"rg": "Identidade",
@@ -21,6 +24,8 @@ const TITULOS_DOCUMENTOS := {
 
 func _ready() -> void:
 	copia_documento.bloquear_interacao()
+	%NovoTurno.mouse_entered.connect(opcao_resumo_destacada.emit)
+	%Menu.mouse_entered.connect(opcao_resumo_destacada.emit)
 
 
 func mostrar_manual() -> void:
@@ -32,6 +37,7 @@ func mostrar_manual() -> void:
 	show()
 	manual.scroll_vertical = 0
 	fechar.grab_focus()
+	leitura_aberta.emit()
 
 
 func mostrar_documento(documento) -> void:
@@ -47,6 +53,7 @@ func mostrar_documento(documento) -> void:
 		copia_documento.carimbar(documento.deferido)
 	show()
 	fechar.grab_focus()
+	leitura_aberta.emit()
 
 
 func mostrar_resumo(atendidos: int, acertos: int, avaliados: int) -> void:
@@ -71,8 +78,11 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 
 func _fechar() -> void:
+	var mostrando_leitura := visible and fechar.visible
 	hide()
 	copia_documento.texture = null
+	if mostrando_leitura:
+		leitura_fechada.emit()
 
 
 func _on_novo_turno_pressed() -> void:
